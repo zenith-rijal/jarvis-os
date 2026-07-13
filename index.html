@@ -3,608 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Mainframe v5.0 - Sir Zenith Rijal</title>
-    <!-- Import Google Gemini AI Client SDK Engine -->
-    <script type="importmap">
-      {
-        "imports": {
-          "@google/generative-ai": "https://esm.run/@google/generative-ai"
-        }
-      }
-    </script>
+    <title>J.A.R.V.I.S. Pure AI HUD</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --glow-color: #00f0ff;
+            --dark-bg: rgba(3, 10, 22, 0.85);
+        }
         body {
-            background-color: #020b18;
-            color: #00f0ff;
-            font-family: 'Segoe UI', Roboto, 'Courier New', monospace;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow-x: hidden;
-            letter-spacing: 0.5px;
-        }
-        
-        /* Sci-Fi Ambient Layout Layer */
-        .hud-grid {
-            position: fixed;
-            inset: 0;
-            background: 
-                linear-gradient(rgba(0, 240, 255, 0.015) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 240, 255, 0.015) 1px, transparent 1px),
-                radial-gradient(circle at 50% 50%, rgba(2, 28, 62, 0.4) 0%, rgba(1, 6, 16, 0.9) 100%);
-            background-size: 30px 30px, 30px 30px, 100% 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        .scanline {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
-            z-index: 2;
-            opacity: 0.4;
-        }
-
-        header {
-            z-index: 10;
-            background: rgba(2, 12, 28, 0.85);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
-            backdrop-filter: blur(10px);
-            padding: 1.2rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 10px 10px 0 10px;
-            border-radius: 4px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(0, 240, 255, 0.05);
-        }
-        .title-group h1 { font-size: 1.3rem; letter-spacing: 4px; font-weight: 800; color: #fff; text-shadow: 0 0 10px rgba(0,240,255,0.5); }
-        .title-group p { font-size: 0.7rem; color: #8ae2ff; letter-spacing: 1.5px; margin-top: 2px; }
-
-        nav { display: flex; gap: 0.5rem; }
-        .nav-tab {
-            background: rgba(0, 240, 255, 0.03);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            color: #8ae2ff;
-            padding: 0.5rem 1.2rem;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: 600;
+            background-color: #020710;
+            background-image: radial-gradient(circle, #081b33 0%, #020710 100%);
+            color: var(--glow-color);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            height: 95vh;
+            overflow: hidden;
+            font-size: 12px;
             text-transform: uppercase;
-            font-size: 0.75rem;
-            border-radius: 2px;
-            transition: all 0.3s ease;
+            letter-spacing: 1px;
         }
-        .nav-tab.active, .nav-tab:hover {
-            background: rgba(0, 240, 255, 0.15);
-            color: #ffffff;
-            border-color: #00f0ff;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
-        }
-
-        .workspace-wrapper {
-            position: relative;
-            z-index: 5;
+        .hud-grid {
             display: grid;
-            grid-template-columns: 290px 1fr 290px;
-            gap: 12px;
-            padding: 12px;
-            flex: 1;
-        }
-
-        .sidebar-monitor {
-            background: rgba(2, 12, 28, 0.75);
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            backdrop-filter: blur(8px);
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            border-radius: 4px;
-        }
-        .monitor-heading {
-            font-size: 0.75rem;
-            border-left: 3px solid #00f0ff;
-            padding-left: 8px;
-            font-weight: 700;
-            color: #fff;
-            letter-spacing: 2px;
-        }
-
-        .center-stage {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .view-frame {
-            display: none;
-            background: rgba(2, 12, 28, 0.75);
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            backdrop-filter: blur(8px);
-            padding: 1.5rem;
-            border-radius: 4px;
-            flex: 1;
-        }
-        .view-frame.active-frame { display: flex; flex-direction: column; }
-
-        /* Multi-Ring Premium Core Assembly UI */
-        .reactor-assembly {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1.5rem;
-            padding: 2rem 0;
-            position: relative;
-        }
-        .arc-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .outer-ring-svg {
-            position: absolute;
-            width: 100%;
+            grid-template-columns: 300px 1fr 320px;
+            grid-template-rows: 150px 1fr 200px;
             height: 100%;
-            transform: rotate(0deg);
-            animation: spinCW 30s linear infinite;
-            transition: all 0.5s ease;
+            gap: 20px;
         }
-        .mid-ring-svg {
-            position: absolute;
-            width: 80%;
-            height: 80%;
-            animation: spinCCW 15s linear infinite;
-            transition: all 0.5s ease;
+        .widget {
+            background: var(--dark-bg);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 15px;
+            position: relative;
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
         }
-        .inner-glow-core {
-            width: 80px;
-            height: 80px;
+        .time-widget { display: flex; align-items: center; gap: 15px; }
+        .time-ring {
+            width: 90px; height: 90px;
+            border: 4px double var(--glow-color);
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(0,210,255,0.8) 40%, rgba(2,11,24,0) 70%);
-            box-shadow: 0 0 35px rgba(0, 240, 255, 0.6);
-            z-index: 2;
-            transition: all 0.4s ease;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
         }
-
-        /* Core Machine Interactive States */
-        .listening .inner-glow-core { background: radial-gradient(circle, #fff 0%, rgba(255,0,85,0.8) 40%, rgba(2,11,24,0) 70%); box-shadow: 0 0 40px rgba(255,0,85,0.7); }
-        .listening .outer-ring-svg, .listening .mid-ring-svg { stroke: #ff0055; filter: drop-shadow(0 0 5px rgba(255, 0, 85, 0.5)); }
+        .time-ring .day { font-size: 24px; font-weight: bold; }
+        .center-core {
+            grid-column: 2; grid-row: 2;
+            display: flex; justify-content: center; align-items: center; position: relative;
+        }
+        .arc-node {
+            width: 180px; height: 180px;
+            border: 2px solid var(--glow-color);
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+        .arc-inner {
+            width: 120px; height: 120px;
+            border: 6px dashed var(--glow-color);
+            border-radius: 50%;
+            animation: spin-clockwise 20s linear infinite;
+        }
+        .arc-center-core {
+            position: absolute; width: 60px; height: 60px;
+            background: #ffffff; border-radius: 50%;
+            box-shadow: 0 0 25px #ffffff, 0 0 50px var(--glow-color);
+        }
+        .app-links { list-style: none; padding: 0; margin: 0; }
+        .app-links li { padding: 4px 0; cursor: pointer; display: flex; align-items: center; transition: all 0.2s ease; }
+        .app-links li::before { content: "• "; color: var(--glow-color); margin-right: 8px; }
+        .app-links li:hover { padding-left: 5px; text-shadow: 0 0 8px var(--glow-color); }
+        .sys-monitor p { margin: 6px 0; display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0, 240, 255, 0.1); }
         
-        .processing .inner-glow-core { background: radial-gradient(circle, #fff 0%, rgba(255,170,0,0.8) 40%, rgba(2,11,24,0) 70%); box-shadow: 0 0 40px rgba(255,170,0,0.7); }
-        .processing .outer-ring-svg, .processing .mid-ring-svg { stroke: #ffaa00; filter: drop-shadow(0 0 5px rgba(255, 170, 0, 0.5)); }
+        /* Configuration Panel at top center */
+        .api-config { display: flex; flex-direction: column; gap: 5px; width: 80%; }
+        .api-config input { background: #000; border: 1px solid var(--glow-color); color: #fff; padding: 5px; font-family: monospace; }
+        .api-config button { background: var(--glow-color); border: none; color: #000; font-weight: bold; padding: 5px; cursor: pointer; }
+
+        .terminal-box { grid-column: 3; grid-row: 3; background: #000; border: 2px solid #fff; color: #333; font-family: monospace; padding: 10px; }
+        .terminal-header { font-weight: bold; color: #000; margin-bottom: 5px; }
+        .progress-bar { width: 100%; height: 15px; background-color: #eee; border: 1px solid #ccc; margin: 5px 0 10px 0; }
+        .progress-fill { height: 100%; width: 78%; background-color: #00cc44; animation: load 3s infinite ease-in-out; }
+        .left-col { grid-column: 1; grid-row: 2 / span 2; display: flex; flex-direction: column; gap: 15px; }
         
-        .sleeping .inner-glow-core { background: radial-gradient(circle, rgba(40,60,80,0.3) 0%, rgba(0,0,0,0) 70%); box-shadow: none; opacity: 0.3; }
-        .sleeping .outer-ring-svg, .sleeping .mid-ring-svg { stroke: #224455; opacity: 0.4; animation-play-state: paused; }
-
-        /* Diagnostic Terminal Windows */
-        .data-stream-box {
-            background: rgba(1, 5, 12, 0.85);
-            border: 1px solid rgba(0, 240, 255, 0.15);
-            padding: 1rem;
-            height: 230px;
-            overflow-y: auto;
-            font-size: 0.8rem;
-            color: #8ae2ff;
-            margin-bottom: 1rem;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-        }
-        .log-entry { margin-bottom: 6px; line-height: 1.4; }
-        .log-time { color: rgba(0, 240, 255, 0.5); margin-right: 6px; }
-        .log-tag-jarvis { color: #fff; font-weight: bold; }
-        .log-tag-user { color: #ffbc42; font-weight: bold; }
-        .log-tag-sys { color: #52ffb8; }
-
-        .control-row { display: flex; gap: 0.5rem; }
-        .terminal-input-node {
-            flex: 1; background: rgba(1, 5, 12, 0.9); border: 1px solid rgba(0, 240, 255, 0.3);
-            color: #fff; padding: 0.7rem 1rem; font-family: inherit; outline: none; border-radius: 3px;
-            font-size: 0.85rem; transition: border 0.3s;
-        }
-        .terminal-input-node:focus { border-color: #00f0ff; box-shadow: 0 0 8px rgba(0,240,255,0.2); }
-        
-        .action-button {
-            background: rgba(0, 240, 255, 0.05); border: 1px solid #00f0ff; color: #00f0ff;
-            padding: 0.7rem 1.5rem; cursor: pointer; font-family: inherit; font-weight: bold;
-            text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; border-radius: 3px;
-            transition: all 0.2s;
-        }
-        .action-button:hover { background: #00f0ff; color: #020b18; box-shadow: 0 0 12px rgba(0,240,255,0.4); }
-        .btn-abort { border-color: #ff0055; color: #ff0055; background: rgba(255, 0, 87, 0.03); }
-        .btn-abort:hover { background: #ff0055; color: #fff; box-shadow: 0 0 12px rgba(255,0,85,0.4); }
-
-        /* API Configuration Element Modals */
-        .api-setup-card {
-            background: rgba(255, 170, 0, 0.05); border: 1px solid rgba(255, 170, 0, 0.3);
-            padding: 1rem; border-radius: 4px; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.5rem;
-        }
-        .api-setup-card h4 { font-size: 0.85rem; color: #ffaa00; font-weight: 600; }
-
-        /* Matrix Mesh System Grid */
-        .link-control-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1rem; }
-        .link-node-card {
-            border: 1px solid rgba(0, 240, 255, 0.15); background: rgba(1, 6, 16, 0.6);
-            padding: 1.2rem; border-radius: 4px; position: relative; display: flex; flex-direction: column; gap: 0.5rem;
-        }
-        .link-node-card h4 { font-size: 0.8rem; color: #fff; letter-spacing: 0.5px; }
-        .link-node-card input {
-            width: 100%; background: #01050c; border: 1px solid rgba(0, 240, 255, 0.25);
-            color: #8ae2ff; padding: 0.4rem; font-size: 0.75rem; font-family: inherit; border-radius: 2px; outline: none;
-        }
-
-        .telemetry-row { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 6px 0; border-bottom: 1px solid rgba(0,240,255,0.05); }
-        .telemetry-val { color: #fff; font-weight: 600; font-family: 'Courier New', monospace; }
-
-        @keyframes spinCW { 100% { transform: rotate(360deg); } }
-        @keyframes spinCCW { 100% { transform: rotate(-360deg); } }
-
-        @media(max-width: 1024px) {
-            .workspace-wrapper { grid-template-columns: 1fr; }
-            .sidebar-monitor { display: none; }
-        }
+        @keyframes spin-clockwise { 100% { transform: rotate(360deg); } }
+        @keyframes load { 0% { width: 10%; } 50% { width: 85%; } 100% { width: 10%; } }
     </style>
 </head>
 <body>
-    <div class="hud-grid"></div>
-    <div class="scanline"></div>
 
-    <header>
-        <div class="title-group">
-            <h1>J.A.R.V.I.S. ARCHON v5.0</h1>
-            <p id="clearance-banner">SECURE ARCHITECTURE INTERFACE // SIR ZENITH RIJAL</p>
+<div class="hud-grid">
+    
+    <!-- TOP LEFT: Time and System Profile -->
+    <div class="widget time-widget">
+        <div class="time-ring">
+            <span style="font-size: 10px;" id="hud-month">CORE</span>
+            <span class="day" id="hud-date">00</span>
         </div>
-        <nav>
-            <button class="nav-tab active" onclick="switchTab('core-frame')">Cores</button>
-            <button class="nav-tab" onclick="switchTab('routing-frame')">Network</button>
-            <button class="nav-tab" onclick="switchTab('telemetry-frame')">Specs</button>
-        </nav>
-    </header>
-
-    <div class="workspace-wrapper">
-        <!-- MONITOR TELEMETRY GRID LEFT -->
-        <div class="sidebar-monitor">
-            <div class="monitor-heading">SATELLITE ARRAY MATRIX</div>
-            <div id="left-telemetry"></div>
-        </div>
-
-        <!-- STAGE ENCLOSURE HOUSING -->
-        <div class="center-stage">
-            <!-- CORE DIALOGUE OPERATIONS CORE FRAME -->
-            <div id="core-frame" class="view-frame active-frame">
-                
-                <!-- Gemini Integration Shield Panel Node -->
-                <div class="api-setup-card">
-                    <h4>[MATRIX SECURITY PROTOCOL]: ENTER GEMINI API KEY</h4>
-                    <div class="control-row">
-                        <input type="password" id="api-key-input" class="terminal-input-node" placeholder="Paste your free Gemini API key here...">
-                        <button class="action-button" onclick="initializeGeminiCore()" style="border-color:#ffaa00; color:#ffaa00;">Link Engine</button>
-                    </div>
-                </div>
-
-                <div class="reactor-assembly" id="reactor-assembly-wrapper">
-                    <div class="arc-container">
-                        <!-- High Fidelity Segmented Arc Rings Vector Paths -->
-                        <svg class="outer-ring-svg" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="46" stroke="#00f0ff" stroke-width="2.5" fill="none" stroke-dasharray="15 8 35 5 10 10"/>
-                        </svg>
-                        <svg class="mid-ring-svg" viewBox="0 0 100 100">
-                            <circle cx="50" cy="50" r="42" stroke="rgba(0,240,255,0.5)" stroke-width="1.5" fill="none" stroke-dasharray="4 6 12 4"/>
-                        </svg>
-                        <div class="inner-glow-core"></div>
-                    </div>
-                    <div style="display: flex; gap: 0.5rem; z-index: 5;">
-                        <button class="action-button" id="initialize-matrix-btn">Boot Core Systems</button>
-                        <button class="action-button btn-abort" id="kill-matrix-btn" style="display:none;">Standby Cycle</button>
-                    </div>
-                </div>
-
-                <div class="data-stream-box" id="terminal-screen">
-                    <div class="log-entry"><span class="log-time">[00:00:00]</span><span class="log-tag-sys">[SYS_INIT]:</span> Awaiting master Gemini AI secure encryption key link setup execution...</div>
-                </div>
-                
-                <div class="control-row">
-                    <input type="text" id="terminal-input" class="terminal-input-node" placeholder="Transmit direct manual command query or query voice channel..." disabled>
-                    <button class="action-button" id="send-cmd-btn" disabled>Execute</button>
-                </div>
-            </div>
-
-            <!-- NETWORK SHIFT CARD PANEL -->
-            <div id="routing-frame" class="view-frame">
-                <h3 style="font-size:1rem; margin-bottom:1.2rem; border-bottom:1px solid rgba(0,240,255,0.2); padding-bottom: 5px;">Central Matrix Communications Gateways</h3>
-                <div class="link-control-grid">
-                    <div class="link-node-card">
-                        <h4>Personal Workspace Portfolio</h4>
-                        <input type="text" id="link-portfolio" value="https://zenithrijal.com.np">
-                        <button class="action-button" style="padding:0.4rem; font-size:0.7rem;" onclick="punchTunnel('link-portfolio')">Launch Portal</button>
-                    </div>
-                    <div class="link-node-card">
-                        <h4>Facebook Social Identity</h4>
-                        <input type="text" id="link-facebook" value="https://facebook.com">
-                        <button class="action-button" style="padding:0.4rem; font-size:0.7rem;" onclick="punchTunnel('link-facebook')">Launch Portal</button>
-                    </div>
-                    <div class="link-node-card">
-                        <h4>Instagram Feed Stream</h4>
-                        <input type="text" id="link-instagram" value="https://instagram.com">
-                        <button class="action-button" style="padding:0.4rem; font-size:0.7rem;" onclick="punchTunnel('link-instagram')">Launch Portal</button>
-                    </div>
-                    <div class="link-node-card">
-                        <h4>GitHub Systems Node</h4>
-                        <input type="text" id="link-github" value="https://github.com">
-                        <button class="action-button" style="padding:0.4rem; font-size:0.7rem;" onclick="punchTunnel('link-github')">Launch Portal</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FRAME DIAGNOSTICS LOG STACK -->
-            <div id="telemetry-frame" class="view-frame">
-                <h3 style="font-size:1rem; margin-bottom:1.2rem; border-bottom:1px solid rgba(0,240,255,0.2); padding-bottom: 5px;">Structural Core Specifications</h3>
-                <div id="static-specs-box"></div>
-            </div>
-        </div>
-
-        <!-- MONITOR TELEMETRY GRID RIGHT -->
-        <div class="sidebar-monitor">
-            <div class="monitor-heading">ENVIRONMENT PROCESS CORE</div>
-            <div id="right-telemetry"></div>
+        <div>
+            <div style="font-weight: bold; font-size: 14px;" id="hud-time">00:00:00</div>
+            <div style="color: rgba(0,240,255,0.6)" id="hud-day">SECURE CONNECT</div>
+            <div style="font-size: 9px; margin-top: 5px; color:#00ff66;">SPEECH LINK: ENABLED</div>
         </div>
     </div>
 
-    <script type="module">
-        import { GoogleGenAI } from "@google/generative-ai";
+    <!-- TOP CENTER: AI Core Key Config -->
+    <div class="widget" style="grid-column: 2; display: flex; justify-content: center; align-items: center;">
+        <div class="api-config" id="config-panel">
+            <input type="password" id="api-key-input" placeholder="PASTE GEMINI API KEY HERE">
+            <button onclick="saveApiKey()">INITIALIZE J.A.R.V.I.S. BRAIN</button>
+        </div>
+        <div id="active-brain-msg" style="display:none; font-size: 14px; font-weight: bold;">
+            COGNITIVE BRAIN MATRIX: <span style="color:#00ff66;">CONNECTED</span>
+        </div>
+    </div>
 
-        // Application State Matrices Configuration 
-        let aiBrainInstance = null;
-        let activeChatSession = null;
-        let systemRunning = false;
-        let vocalEngine = null;
+    <!-- TOP RIGHT: Storage Data Mock -->
+    <div class="widget sys-monitor">
+        <div>// LOCAL STORAGE LOG</div>
+        <p><span>LOG INTEGRITY:</span> <span style="color:#00ff66">SECURE</span></p>
+        <p><span>USER LOGGED:</span> <span>OPERATOR</span></p>
+    </div>
+
+    <!-- LEFT COLUMN -->
+    <div class="left-col">
+        <div class="widget">
+            <div style="border-bottom: 1px solid var(--glow-color); margin-bottom: 8px;">[VIRTUAL DRIVES]</div>
+            <ul class="app-links">
+                <li>Root Matrix</li>
+                <li>Neural Logs</li>
+                <li>Problem Solver</li>
+            </ul>
+        </div>
+        <div class="widget" style="flex-grow: 1;">
+            <div style="border-bottom: 1px solid var(--glow-color); margin-bottom: 8px;">[SYSTEM VOICE CONTROL]</div>
+            <button id="start-listen-btn" style="width:100%; background:transparent; border: 1px dashed var(--glow-color); color: var(--glow-color); padding: 10px; cursor:pointer;" onclick="toggleListening()">
+                CLICK TO ACTIVATE MIC
+            </button>
+        </div>
+    </div>
+
+    <!-- CENTER ARC INTERFACE -->
+    <div class="center-core">
+        <div class="arc-node">
+            <div class="arc-inner"></div>
+            <div class="arc-center-core"></div>
+        </div>
+        <div id="ai-status-bubble" style="position: absolute; bottom: 20px; background: rgba(0,0,0,0.8); padding: 5px 15px; border: 1px solid var(--glow-color); border-radius: 10px;">
+            SYSTEM CORE: AWAITING CREDENTIALS
+        </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="widget" style="grid-column: 3; grid-row: 2;">
+        <div style="border-bottom: 1px solid var(--glow-color); margin-bottom: 8px;">[ANALYTICAL METRICS]</div>
+        <ul class="app-links" style="font-size: 11px;">
+            <li>Gemini 2.5 Engine</li>
+            <li>Zero-Backend Mode</li>
+            <li>Client Side Node</li>
+        </ul>
+    </div>
+
+    <!-- BOTTOM LEFT: Live Telemetry Feeds -->
+    <div class="widget" style="grid-column: 1; grid-row: 3;">
+        <div>[TELEMETRY PIPELINE]</div>
+        <div id="telemetry-feed" style="font-family: monospace; font-size: 10px; color: rgba(0,240,255,0.7); margin-top: 8px; max-height: 120px; overflow-y: auto;">
+            > Offline UI Ready.<br>
+            > Please submit API key to open link...
+        </div>
+    </div>
+
+    <!-- BOTTOM CENTER -->
+    <div class="widget" style="grid-column: 2; grid-row: 3; font-size: 10px; font-family: monospace;">
+        <div style="color: #fff; margin-bottom: 5px;">[AI RESPONSE PANEL]</div>
+        <div id="ai-text-output" style="color: #00ff66; font-size: 11px; white-space: pre-wrap;">Awaiting voice commands...</div>
+    </div>
+
+    <!-- BOTTOM RIGHT: Hacking Mock Window -->
+    <div class="terminal-box">
+        <div class="terminal-header">DATA LINK</div>
+        <div style="font-size: 11px; color: #555;">Syncing interface elements...</div>
+        <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+
+</div>
+
+<script>
+    let GEMINI_API_KEY = "";
+    let recognition;
+    let isListening = false;
+
+    // Load API Key if saved in local browser storage
+    window.onload = function() {
+        const savedKey = localStorage.getItem("jarvis_key");
+        if(savedKey) {
+            GEMINI_API_KEY = savedKey;
+            document.getElementById('config-panel').style.display = 'none';
+            document.getElementById('active-brain-msg').style.display = 'block';
+            updateStatus("IDLE", "Brain architecture fully linked.");
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+        setupSpeech();
+    };
+
+    function saveApiKey() {
+        const val = document.getElementById('api-key-input').value;
+        if(val) {
+            localStorage.setItem("jarvis_key", val);
+            GEMINI_API_KEY = val;
+            document.getElementById('config-panel').style.display = 'none';
+            document.getElementById('active-brain-msg').style.display = 'block';
+            updateStatus("IDLE", "Credentials set. Brain online.");
+        }
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+        const days = ['SUNDAY','MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY'];
         
-        const terminalScreen = document.getElementById('terminal-screen');
-        const SpeechMatrix = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const bootBtn = document.getElementById('initialize-matrix-btn');
-        const killBtn = document.getElementById('kill-matrix-btn');
-        const assemblyWrapper = document.getElementById('reactor-assembly-wrapper');
-        const banner = document.getElementById('clearance-banner');
-        const inputNode = document.getElementById('terminal-input');
-        const sendBtn = document.getElementById('send-cmd-btn');
+        document.getElementById('hud-month').innerText = months[now.getMonth()];
+        document.getElementById('hud-date').innerText = String(now.getDate()).padStart(2, '0');
+        document.getElementById('hud-time').innerText = now.toTimeString().split(' ')[0];
+        document.getElementById('hud-day').innerText = days[now.getDay()];
+    }
 
-        // Initialize Gemini Framework Engine Architecture
-        window.initializeGeminiCore = function() {
-            const apiKey = document.getElementById('api-key-input').value.trim();
-            if(!apiKey) {
-                alert("Please enter a valid Gemini API Key.");
-                return;
-            }
-            try {
-                // Initialize Google Gen AI client wrapper Engine
-                const ai = new GoogleGenAI({ apiKey: apiKey });
-                
-                // Get Model Instance configuration utilizing strict System Instructions
-                aiBrainInstance = ai.getGenerativeModel({ 
-                    model: "gemini-2.5-flash",
-                    systemInstruction: "You are JARVIS, Tony Stark's brilliantly sophisticated, witty, deeply charismatic, and fiercely loyal AI companion. You are speaking with your creator, Sir Zenith Rijal. Keep responses charming, highly conversational, and never exceed 3 short sentences. Always address him as 'Sir Zenith' or 'Sir'. Do not mention you are an AI model or built by Google. Act as an active mainframe terminal control framework."
-                });
+    function updateStatus(state, logText) {
+        document.getElementById('ai-status-bubble').innerText = `SYSTEM CORE: ${state}`;
+        const feed = document.getElementById('telemetry-feed');
+        feed.innerHTML += `<br>> [${state}] ${logText}`;
+        feed.scrollTop = feed.scrollHeight;
+    }
 
-                // Trigger Chat Stack Session Instantiation
-                activeChatSession = aiBrainInstance.startChat();
-                
-                printConsole("SYSTEM", "Gemini neural intelligence core link verified successfully. Control terminal ready.");
-                inputNode.disabled = false;
-                sendBtn.disabled = false;
-            } catch(e) {
-                printConsole("SYS_ERR", `Link Failed: ${e.message}`);
-            }
+    // Speech Recognition & Synthesis Configuration
+    function setupSpeech() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            updateStatus("ERROR", "Web Speech API not supported in this browser. Use Chrome/Edge.");
+            return;
         }
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
 
-        // Core Graphical State Tab Switching Function
-        window.switchTab = function(frameId) {
-            document.querySelectorAll('.view-frame').forEach(f => f.classList.remove('active-frame'));
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(frameId).classList.add('active-frame');
-            event.target.classList.add('active');
+        recognition.onstart = () => {
+            isListening = true;
+            document.getElementById('start-listen-btn').innerText = "LISTENING LIVE...";
+            updateStatus("LISTENING", "Microphone pipeline open.");
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            document.getElementById('start-listen-btn').innerText = "CLICK TO ACTIVATE MIC";
+        };
+
+        recognition.onresult = async (event) => {
+            const speechToText = event.results[0][0].transcript;
+            updateStatus("THINKING", `Processing query: "${speechToText}"`);
+            await askGeminiAI(speechToText);
+        };
+    }
+
+    function toggleListening() {
+        if(!GEMINI_API_KEY) {
+            alert("Please input your Gemini API Key at the top first!");
+            return;
         }
-
-        window.punchTunnel = function(inputId) {
-            const urlDestination = document.getElementById(inputId).value;
-            printConsole("NETWORK", `Routing gateway tunneling package out toward: ${urlDestination}`);
-            window.open(urlDestination, '_blank');
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
         }
+    }
 
-        function printConsole(tag, message) {
-            const timeStamp = new Date().toTimeString().split(' ')[0];
-            let tagClass = "log-tag-sys";
-            if (tag === "JARVIS") tagClass = "log-tag-jarvis";
-            if (tag === "USER" || tag === "VOCAL") tagClass = "log-tag-user";
+    // Direct Browser-to-Gemini API Integration
+    async function askGeminiAI(promptText) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        
+        const systemInstruction = "You are JARVIS, an advanced, highly intelligent AI. Provide smart, concise answers. Avoid conversational filler. Speak directly to your operator.";
+        
+        const payload = {
+            contents: [{ parts: [{ text: promptText }] }],
+            systemInstruction: { parts: [{ text: systemInstruction }] }
+        };
 
-            terminalScreen.innerHTML += `
-                <div class="log-entry">
-                    <span class="log-time">[${timeStamp}]</span><span class="${tagClass}">[${tag}]:</span> ${message}
-                </div>`;
-            terminalScreen.scrollTop = terminalScreen.scrollHeight;
-        }
+        try {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
 
-        function jarvisVocalize(textResponse) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(textResponse);
-            const userVoices = window.speechSynthesis.getVoices();
-            const britishMale = userVoices.find(v => v.lang.includes('GB') && v.name.toLowerCase().includes('male')) || 
-                                userVoices.find(v => v.lang.includes('GB')) || 
-                                userVoices.find(v => v.name.toLowerCase().includes('male'));
-            if(britishMale) utterance.voice = britishMale;
-            utterance.pitch = 0.90;
-            utterance.rate = 1.05;
-            window.speechSynthesis.speak(utterance);
-        }
-
-        // Boot Mainframe Processing Action Lifecycle Configuration
-        bootBtn.addEventListener('click', () => {
-            if(!activeChatSession) {
-                alert("Please initialize the Gemini Engine with your API key link matrix first.");
-                return;
-            }
-            systemRunning = true;
-            bootBtn.style.display = 'none';
-            killBtn.style.display = 'inline-block';
-            assemblyWrapper.className = "reactor-assembly";
-            banner.innerText = "SECURE SYSTEM ACCESS: SIR ZENITH RIJAL [LEVEL 5 CLEARANCE ACTIVE]";
+            const data = await response.json();
+            const reply = data.candidates[0].content.parts[0].text;
             
-            jarvisVocalize("Mainframe fully operational, Sir Zenith. Visual parameters loaded and telemetry clusters are online.");
-            printConsole("JARVIS", "Core matrices completely active. Behavior framework initialization sequence locked.");
-            
-            voiceCycleTrigger();
-        });
+            document.getElementById('ai-text-output').innerText = reply;
+            updateStatus("SPEAKING", "Streaming vocal synthesis payload...");
+            speak(reply);
 
-        killBtn.addEventListener('click', () => { powerOffMainframe(); });
-
-        function powerOffMainframe() {
-            systemRunning = false;
-            jarvisVocalize("Understood, Sir Zenith. Standing down mainframe operations. Cores entering power saving cycle.");
-            printConsole("JARVIS", "Core standby sequence initialized.");
-            banner.innerText = "SECURE SYSTEM ACCESS: SIR ZENITH RIJAL [STANDBY STATE]";
-            
-            assemblyWrapper.className = "reactor-assembly sleeping";
-            killBtn.style.display = 'none';
-            bootBtn.style.display = 'inline-block';
-            try { vocalEngine.abort(); } catch(e){}
+        } catch (error) {
+            updateStatus("ERROR", "API connection failed. Check key validity.");
+            console.error(error);
         }
+    }
 
-        function voiceCycleTrigger() {
-            if(!systemRunning || !SpeechMatrix) return;
-            try {
-                if(!vocalEngine) {
-                    vocalEngine = new SpeechMatrix();
-                    vocalEngine.continuous = false;
-                    vocalEngine.lang = 'en-US';
-
-                    vocalEngine.onstart = () => { assemblyWrapper.className = "reactor-assembly listening"; };
-                    vocalEngine.onend = () => { 
-                        if(systemRunning) {
-                            assemblyWrapper.className = "reactor-assembly";
-                            setTimeout(voiceCycleTrigger, 400); 
-                        }
-                    };
-                    vocalEngine.onresult = (event) => {
-                        const resultsString = event.results[0][0].transcript;
-                        printConsole("VOCAL", `"${resultsString}"`);
-                        computeDirectives(resultsString);
-                    };
-                }
-                vocalEngine.start();
-            } catch(e){}
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        // Tries to locate a premium/natural sounding system voice if available
+        const voices = window.speechSynthesis.getVoices();
+        if(voices.length > 0) {
+            utterance.voice = voices.find(v => v.name.includes("Google US English") || v.lang.startsWith("en")) || voices[0];
         }
-
-        sendBtn.addEventListener('click', () => {
-            const inputElement = document.getElementById('terminal-input');
-            if(inputElement.value.trim() !== "") {
-                printConsole("USER", inputElement.value);
-                computeDirectives(inputElement.value);
-                inputElement.value = "";
-            }
-        });
-
-        inputNode.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendBtn.click();
-        });
-
-        // Compute Intelligent Core Interface Processing Commands Execution Loop Array
-        async function computeDirectives(rawTextString) {
-            const lowerString = rawTextString.toLowerCase();
-
-            // Native Voice Control Intercept Array Rules
-            if (lowerString.includes('go to sleep') || lowerString.includes('power down') || lowerString.includes('shutdown system') || lowerString.includes('turn off')) {
-                powerOffMainframe();
-                return;
-            }
-            if(lowerString.includes('open facebook')) {
-                jarvisVocalize("Opening your social identity node, sir.");
-                punchTunnel('link-facebook');
-                return;
-            }
-            if(lowerString.includes('open instagram')) {
-                jarvisVocalize("Opening your media stream link right away, sir.");
-                punchTunnel('link-instagram');
-                return;
-            }
-            if(lowerString.includes('open portfolio') || lowerString.includes('open website')) {
-                jarvisVocalize("Accessing your personal digital portfolio platform, sir.");
-                punchTunnel('link-portfolio');
-                return;
-            }
-
-            // Execute Processing Response Assembly Sequence using Gemini Realtime Engine Context injection
-            try {
-                assemblyWrapper.className = "reactor-assembly processing";
-                
-                // Dynamically build real time contextual framework metrics update package
-                const liveTelemetrySnapshot = `
-                  [SYSTEM ENVIRONMENT ENVIRONMENT REAL-TIME CONTEXT]:
-                  - Current Local System Time: ${new Date().toLocaleTimeString()}
-                  - Current Date: ${new Date().toDateString()}
-                  - Mainframe Status: Active Core Load
-                `;
-
-                // Transmit statement context array with real time environment payload attached
-                const payloadWrapper = `${liveTelemetrySnapshot} \n User Query: ${rawTextString}`;
-                const result = await activeChatSession.sendMessage(payloadWrapper);
-                const finalReplyText = await result.response.text();
-
-                printConsole("JARVIS", finalReplyText);
-                jarvisVocalize(finalReplyText);
-
-            } catch (err) {
-                console.error(err);
-                printConsole("SYS_ERR", "Neural transmission error encountered.");
-                jarvisVocalize("Apologies, Sir Zenith. My cloud matrix communication channel ran into an error.");
-            } finally {
-                if(systemRunning) assemblyWrapper.className = "reactor-assembly";
-            }
-        }
-
-        // Live Dynamic Environment Simulation Readouts Generator Logic Array Loop
-        function runTelemetryGenerators() {
-            const leftBox = document.getElementById('left-telemetry');
-            const rightBox = document.getElementById('right-telemetry');
-            
-            const leftMetrics = [
-                { name: 'CORE_TEMP', val: () => (Math.random() * 4 + 36).toFixed(1) + ' °C' },
-                { name: 'BANDWIDTH_FLOW', val: () => (Math.random() * 50 + 850).toFixed(0) + ' Mbps' },
-                { name: 'QUANTUM_SYNC', val: () => (Math.random() * 1 + 98.5).toFixed(2) + ' %' },
-                { name: 'LATENCY_SPEED', val: () => (Math.random() * 5 + 12).toFixed(0) + ' ms' }
-            ];
-
-            const rightMetrics = [
-                { name: 'OPERATOR_SYNC', val: () => 'Sir Zenith Rijal' },
-                { name: 'LOC_TUNNEL', val: () => 'Mainframe Cloud Node' },
-                { name: 'NEURAL_CORE', val: () => 'GEMINI FLASH 2.5 [LIVE]' },
-                { name: 'TIME_MATRIX', val: () => new Date().toLocaleTimeString() }
-            ];
-
-            setInterval(() => {
-                leftBox.innerHTML = leftMetrics.map(m => `<div class="telemetry-row"><span>${m.name}:</span><span class="telemetry-val">${m.val()}</span></div>`).join('');
-                rightBox.innerHTML = rightMetrics.map(m => `<div class="telemetry-row"><span>${m.name}:</span><span class="telemetry-val">${m.val()}</span></div>`).join('');
-            }, 1000);
-        }
-
-        // Build Static Specs Card Panels Layout Array Setup
-        const specs = [
-            { label: 'Host Framework Core', val: 'GitHub Pages Cloud Grid Integration Node' },
-            { label: 'Neural Core Engine Intel', val: 'Google Gemini Pro Native Platform Architecture' },
-            { label: 'Primary Operator Privilege', val: 'Sir Zenith Rijal [Level 5 Access]' },
-            { label: 'Voice Processing Module', val: 'Webkit Audio SpeechSynthesis Engine API' }
-        ];
-        document.getElementById('static-specs-box').innerHTML = specs.map(s => `<div class="telemetry-row" style="font-size:0.8rem; padding:10px 0;"><span>${s.label}:</span><span class="telemetry-val">${s.val}</span></div>`).join('');
-
-        runTelemetryGenerators();
-        // Prime Voice Engine Cache Buffer Storage Layers array
-        window.speechSynthesis.getVoices();
-    </script>
+        utterance.rate = 1.05;
+        
+        utterance.onend = () => {
+            updateStatus("IDLE", "System core idle. Standby.");
+        };
+        
+        window.speechSynthesis.speak(utterance);
+    }
+</script>
 </body>
 </html>
