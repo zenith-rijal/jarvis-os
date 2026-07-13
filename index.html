@@ -3,21 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Mainframe Core v7.0</title>
-    <!-- Hardware Accelerated Graphics & Global Distributed AI Core -->
+    <title>J.A.R.V.I.S. // Autonomous Neural Mainframe</title>
+    <!-- Serverless Distributed AI Backbone -->
     <script src="https://js.puter.com/v2/"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&display=swap');
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
-            background-color: #01050d;
+            background-color: #01040a;
             color: #4fe3ff;
             font-family: 'Rajdhani', sans-serif;
             font-weight: 500;
@@ -27,94 +22,76 @@
             overflow: hidden;
         }
 
-        /* Tactical HUD Background Patterns */
-        .hud-grid-matrix {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: 
-                linear-gradient(rgba(79, 227, 255, 0.01) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(79, 227, 255, 0.01) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: 1;
-            pointer-events: none;
+        /* Stark Lab Telemetry Core Layout */
+        .mainframe-grid {
+            display: grid;
+            grid-template-columns: 320px 1fr 340px;
+            flex: 1;
+            height: calc(100vh - 70px);
+            background: radial-gradient(circle at center, #020b1a 0%, #01040a 100%);
         }
 
-        /* Top Bar Interface Header */
         header {
-            background: rgba(2, 8, 20, 0.9);
+            background: rgba(2, 6, 15, 0.95);
             border-bottom: 1px solid rgba(79, 227, 255, 0.2);
-            padding: 0.8rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.6);
             z-index: 10;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
         }
 
-        .identity-array h1 {
+        .sys-identity h1 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.15rem;
+            font-size: 1.3rem;
             font-weight: 900;
-            letter-spacing: 4px;
+            letter-spacing: 5px;
             color: #ffffff;
-            text-shadow: 0 0 15px rgba(79, 227, 255, 0.5);
+            text-shadow: 0 0 15px rgba(79, 227, 255, 0.6);
         }
 
-        .identity-array p {
+        .sys-identity p {
             font-size: 0.75rem;
             color: #5c8f9d;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-top: 2px;
+            letter-spacing: 2px;
+            margin-top: 3px;
         }
 
-        /* Main Workspace Splitting Layout */
-        .mainframe-wrapper {
-            display: grid;
-            grid-template-columns: 280px 1fr 320px;
-            flex: 1;
-            height: calc(100vh - 60px);
-            z-index: 5;
-            background: rgba(1, 5, 13, 0.8);
-        }
-
-        /* Modular Console Sideflanks */
-        .console-flank {
-            background: rgba(2, 9, 24, 0.6);
-            backdrop-filter: blur(10px);
+        /* Modular Side Consoles */
+        .side-module {
+            background: rgba(2, 8, 20, 0.75);
+            backdrop-filter: blur(15px);
             border-right: 1px solid rgba(79, 227, 255, 0.1);
             display: flex;
             flex-direction: column;
             padding: 1.5rem;
             gap: 1.5rem;
-            overflow-y: auto;
+            z-index: 5;
         }
 
-        .console-flank.right-side {
+        .side-module.right-flank {
             border-right: none;
             border-left: 1px solid rgba(79, 227, 255, 0.1);
         }
 
-        .panel-title {
+        .module-header {
             font-family: 'Orbitron', sans-serif;
             font-size: 0.8rem;
             font-weight: 700;
             color: #ffffff;
             letter-spacing: 2px;
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(79, 227, 255, 0.2);
+            border-bottom: 1px solid rgba(79, 227, 255, 0.25);
+            text-transform: uppercase;
         }
 
-        /* Left Side Automated Launcher Pad Controls */
-        .launcher-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .launcher-item {
+        /* Launcher Array Subsystems */
+        .auto-launcher-stack { display: flex; flex-direction: column; gap: 12px; }
+        .launcher-node {
             background: rgba(79, 227, 255, 0.02);
-            border: 1px solid rgba(79, 227, 255, 0.15);
+            border: 1px solid rgba(79, 227, 255, 0.12);
             padding: 14px;
             border-radius: 4px;
             display: flex;
@@ -122,476 +99,343 @@
             gap: 14px;
             transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
-
-        .launcher-item.active-link {
-            background: rgba(79, 227, 255, 0.08);
+        .launcher-node.triggered {
+            background: rgba(79, 227, 255, 0.1);
             border-color: #4fe3ff;
-            box-shadow: 0 0 15px rgba(79, 227, 255, 0.2);
-            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(79, 227, 255, 0.3);
+            transform: scale(1.03);
         }
+        .launcher-node h4 { color: #ffffff; font-size: 0.9rem; font-weight: 600; }
+        .launcher-node p { font-size: 0.75rem; color: #5c8f9d; }
 
-        .launcher-item .icon-node { font-size: 1.2rem; }
-        .launcher-item h4 { color: #ffffff; font-size: 0.85rem; font-weight: 600; }
-        .launcher-item p { font-size: 0.7rem; color: #5c8f9d; margin-top: 1px; }
-
-        /* Right Side Automated Notepad Subsystem */
-        .notepad-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .automated-log-field {
-            width: 100%;
-            flex: 1;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(79, 227, 255, 0.15);
-            border-radius: 4px;
-            padding: 14px;
-            color: #a3e7f5;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            resize: none;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .automated-log-field:focus {
-            border-color: rgba(79, 227, 255, 0.4);
-        }
-
-        /* Center Dynamic AI Viewport Structure */
-        .center-operational-hub {
+        /* Core Central Conversational Deck */
+        .center-intelligence-deck {
             display: grid;
-            grid-template-rows: 1fr 160px;
-            background: #000207;
+            grid-template-rows: 1fr 100px;
+            background: rgba(0, 2, 5, 0.6);
             position: relative;
-            border-left: 1px solid rgba(79, 227, 255, 0.05);
-            border-right: 1px solid rgba(79, 227, 255, 0.05);
         }
 
-        .hologram-stage-deck {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background: radial-gradient(circle at center, #02112b 0%, #000207 85%);
-        }
-
-        #threejs-canvas-frame {
-            width: 100%; height: 100%;
-            position: absolute; top: 0; left: 0; z-index: 2;
-        }
-
-        /* HUD Technical Metrics Matrix Overlay */
-        .hud-overlay-metrics {
-            position: absolute;
-            top: 20px; left: 20px;
-            z-index: 5;
-            pointer-events: none;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.7rem;
-            color: rgba(79, 227, 255, 0.5);
-            line-height: 1.6;
-        }
-
-        /* Voice Matrix Audio Core Reactor Ring */
-        .voice-core-anchor {
-            position: absolute;
-            bottom: 30px; right: 30px;
-            z-index: 10;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .biometric-reactor-ring {
-            width: 70px; height: 70px;
-            border: 2px dashed #4fe3ff;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(79, 227, 255, 0.1);
-        }
-
-        .biometric-reactor-ring.listening {
-            border-color: #ff0055;
-            animation: pulseStream 1.5s infinite linear;
-            box-shadow: 0 0 25px rgba(255, 0, 85, 0.4);
-        }
-
-        .biometric-reactor-ring.speaking {
-            border-color: #00ffaa;
-            animation: pulseStream 2s infinite ease-in-out;
-            box-shadow: 0 0 25px rgba(0, 255, 170, 0.4);
-        }
-
-        .biometric-reactor-ring.thinking {
-            border-color: #ffaa00;
-            animation: rotateCore 4s infinite linear;
-            box-shadow: 0 0 25px rgba(255, 170, 0, 0.4);
-        }
-
-        .reactor-pulse-node {
-            width: 24px; height: 24px;
-            background: #4fe3ff;
-            border-radius: 50%;
-            box-shadow: 0 0 15px #4fe3ff;
-            transition: all 0.3s ease;
-        }
-
-        .listening .reactor-pulse-node { background: #ff0055; box-shadow: 0 0 15px #ff0055; }
-        .speaking .reactor-pulse-node { background: #00ffaa; box-shadow: 0 0 15px #00ffaa; }
-        .thinking .reactor-pulse-node { background: #ffaa00; box-shadow: 0 0 15px #ffaa00; }
-
-        .voice-status-lbl {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.65rem;
-            letter-spacing: 1px;
-            color: #72a6b5;
-            text-transform: uppercase;
-        }
-
-        /* Conversational AI Output Window Stream */
-        .ai-terminal-stream-log {
-            background: rgba(2, 7, 18, 0.95);
-            border-top: 1px solid rgba(79, 227, 255, 0.15);
-            padding: 1.2rem;
+        .dialogue-stream {
+            padding: 2rem;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 18px;
         }
 
-        .speech-bubble {
-            max-width: 85%;
-            padding: 10px 16px;
+        .bubble {
+            max-width: 80%;
+            padding: 12px 18px;
             border-radius: 4px;
+            font-size: 1rem;
             line-height: 1.5;
-            font-size: 0.95rem;
-            animation: revealBubble 0.3s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+            letter-spacing: 0.3px;
+            animation: cubic-bezier(0.1, 0.9, 0.2, 1) 0.4s slideUp;
         }
 
-        .speech-bubble.jarvis-node {
+        .bubble.jarvis-core {
             background: rgba(79, 227, 255, 0.03);
             border-left: 3px solid #4fe3ff;
             color: #ffffff;
             align-self: flex-start;
         }
 
-        .speech-bubble.user-node {
-            background: rgba(255, 255, 255, 0.02);
+        .bubble.user-core {
+            background: rgba(255, 255, 255, 0.01);
             border-right: 3px solid #5c8f9d;
             color: #a3e7f5;
             align-self: flex-end;
         }
 
-        @keyframes rotateCore { 100% { transform: rotate(360deg); } }
-        @keyframes pulseStream { 0% { transform: scale(1); } 50% { transform: scale(1.06); } 100% { transform: scale(1); } }
-        @keyframes revealBubble { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        /* Centralized Interactive AI Matrix Interface */
+        .hud-control-hub {
+            border-top: 1px solid rgba(79, 227, 255, 0.15);
+            background: #02060f;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        /* Quantum Arc Reactor Core Interface Button */
+        .arc-reactor-anchor {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+        }
+
+        .arc-sphere {
+            width: 55px; height: 55px;
+            border: 2px dashed #4fe3ff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.4s ease;
+        }
+
+        .arc-sphere.listening { border-color: #ff0055; animation: spin 4s infinite linear; box-shadow: 0 0 20px rgba(255, 0, 85, 0.3); }
+        .arc-sphere.thinking { border-color: #ffaa00; animation: spin 1.5s infinite linear; box-shadow: 0 0 20px rgba(255, 170, 0, 0.3); }
+        .arc-sphere.speaking { border-color: #00ffaa; box-shadow: 0 0 25px rgba(0, 255, 170, 0.4); }
+
+        .arc-pulse { width: 18px; height: 18px; background: #4fe3ff; border-radius: 50%; box-shadow: 0 0 12px #4fe3ff; transition: all 0.3s; }
+        .listening .arc-pulse { background: #ff0055; box-shadow: 0 0 12px #ff0055; }
+        .thinking .arc-pulse { background: #ffaa00; box-shadow: 0 0 12px #ffaa00; }
+        .speaking .arc-pulse { background: #00ffaa; box-shadow: 0 0 12px #00ffaa; }
+
+        .status-readout-lbl {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: #72a6b5;
+            text-transform: uppercase;
+        }
+
+        /* Automated Systems Notebook Overlay */
+        .automated-log-field {
+            width: 100%; flex: 1;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(79, 227, 255, 0.15);
+            border-radius: 4px; padding: 14px;
+            color: #a3e7f5; font-family: 'Rajdhani', sans-serif;
+            font-size: 0.95rem; line-height: 1.5;
+            resize: none; outline: none;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div class="hud-grid-matrix"></div>
-
     <header>
-        <div class="identity-array">
-            <h1>J.A.R.V.I.S. // CENTRAL INTELLIGENCE LABS</h1>
-            <p>Automated Operator Workspace Layer // Operator: Sir Zenith Rijal</p>
+        <div class="sys-identity">
+            <h1>J.A.R.V.I.S. // OPERATIONAL DIRECT LOGIC</h1>
+            <p>Persistent Awareness Environment // Operator: Sir Zenith Rijal</p>
         </div>
     </header>
 
-    <div class="mainframe-wrapper">
+    <div class="mainframe-grid">
         
-        <!-- LEFT PANEL: Fully Automated Launcher Pad Matrix -->
-        <div class="console-flank">
-            <div class="panel-title">AUTOMATED LAUNCHER PAD</div>
-            <div class="launcher-stack" id="dynamic-launcher-pad">
-                <div class="launcher-item" id="link-search">
-                    <span class="icon-node">🔍</span>
-                    <div class="info-block">
-                        <h4>Global Search</h4>
-                        <p>Google Mainframe Channel</p>
+        <!-- LEFT MODULE: Automated Workspace Matrix System -->
+        <div class="side-module">
+            <div class="module-header">SYSTEM LAUNCHER COMPILER</div>
+            <div class="auto-launcher-stack">
+                <div class="launcher-node" id="node-search">
+                    <div class="meta">
+                        <h4>Global Search Matrix</h4>
+                        <p>Google Core Interface Gateway</p>
                     </div>
                 </div>
-                <div class="launcher-item" id="link-repos">
-                    <span class="icon-node">🐙</span>
-                    <div class="info-block">
-                        <h4>Code Repositories</h4>
-                        <p>GitHub Engineering Stack</p>
+                <div class="launcher-node" id="node-git">
+                    <div class="meta">
+                        <h4>Production Repositories</h4>
+                        <p>GitHub Secure Control Array</p>
                     </div>
                 </div>
-                <div class="launcher-item" id="link-media">
-                    <span class="icon-node">📺</span>
-                    <div class="info-block">
-                        <h4>Media Feed</h4>
-                        <p>YouTube Knowledge Stream</p>
+                <div class="launcher-node" id="node-media">
+                    <div class="meta">
+                        <h4>Intelligence Stream Feed</h4>
+                        <p>YouTube Global Network</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- CENTER PANEL: Primary Holographic Stage & Core Voice Diagnostics Loop -->
-        <div class="center-operational-hub">
-            <div class="hologram-stage-deck">
-                <div class="hud-overlay-metrics" id="hologram-telemetry">
-                    SYSTEM: RE-INITIALIZED // SECURE FEED<br>
-                    OPTICAL MATRIX PROJECTOR: IDLE<br>
-                    VERTEX ARRAY COUNT: 0 PTS
-                </div>
-                
-                <div id="threejs-canvas-frame"></div>
-
-                <!-- Automated Hands-Free Voice Controller Node -->
-                <div class="voice-core-anchor" id="voice-activation-trigger">
-                    <div class="biometric-reactor-ring" id="reactor-ring-status">
-                        <div class="reactor-pulse-node"></div>
-                    </div>
-                    <div class="voice-status-lbl" id="voice-status-text">Click To Engage Core</div>
+        <!-- CENTER MODULE: Context-Aware Intelligence Feed -->
+        <div class="center-intelligence-deck">
+            <div class="dialogue-stream" id="dialogue-scroll-anchor">
+                <div class="bubble jarvis-core">
+                    Environmental audio diagnostic synchronization complete, Sir Zenith. Visual wireframe projection layers have been terminated to maximize primary processing hardware availability. Memory buffers are initialized and actively tracking context. Select the Arc Core Module below to engage permanent voice communication.
                 </div>
             </div>
 
-            <!-- Conversational Stream Readout Layer -->
-            <div class="ai-terminal-stream-log" id="terminal-dialogue-output">
-                <div class="speech-bubble jarvis-node">
-                    Mainframe optimization complete, Sir Zenith. The manual text entry field has been completely purged from the deck. The audio matrix is directly patched to my neural loops. Tap the reactor core icon in the lower right corner to authorize voice input link synchronization. I will handle your requests hands-free.
+            <div class="hud-control-hub">
+                <div class="arc-reactor-anchor" id="system-arc-trigger">
+                    <div class="arc-sphere" id="arc-node-status">
+                        <div class="arc-pulse"></div>
+                    </div>
+                    <div class="status-readout-lbl" id="status-string-display">Mainframe Standby</div>
+                </div>
+                <div style="font-family: 'Orbitron', sans-serif; font-size: 0.7rem; color: rgba(79, 227, 255, 0.4);">
+                    AWARENESS FEED // 100% STABLE
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT PANEL: Automated Intelligence Notepad System -->
-        <div class="console-flank right-side">
-            <div class="panel-title">AUTOMATED TELEMETRY NOTEPAD</div>
-            <div class="notepad-wrapper">
-                <textarea class="automated-log-field" id="jarvis-notepad-log" placeholder="Waiting for active telemetry data download vectors from J.A.R.V.I.S..." readonly></textarea>
-            </div>
+        <!-- RIGHT MODULE: Automated Data Logger Module -->
+        <div class="side-module right-flank">
+            <div class="module-header">AUTOMATED METRICS TRACKER</div>
+            <textarea class="automated-log-field" id="terminal-notepad" placeholder="Waiting for data stream entries via voice commands..." readonly></textarea>
         </div>
 
     </div>
 
     <script>
-        // DOM Workspace Element Mappings
-        const dialogueContainer = document.getElementById('terminal-dialogue-output');
-        const reactorRing = document.getElementById('reactor-ring-status');
-        const voiceStatusText = document.getElementById('voice-status-text');
-        const telemetryOverlay = document.getElementById('hologram-telemetry');
-        const automatedNotepad = document.getElementById('jarvis-notepad-log');
-        
-        // Launcher Node Selections
-        const linkSearch = document.getElementById('link-search');
-        const linkRepos = document.getElementById('link-repos');
-        const linkMedia = document.getElementById('link-media');
+        const dialogueScrollAnchor = document.getElementById('dialogue-scroll-anchor');
+        const arcNodeStatus = document.getElementById('arc-node-status');
+        const statusStringDisplay = document.getElementById('status-string-display');
+        const terminalNotepad = document.getElementById('terminal-notepad');
 
-        // Three.js Hardware Accelerated Projection Vector Configuration
-        const stage = document.getElementById('threejs-canvas-frame');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(45, stage.clientWidth / stage.clientHeight, 0.1, 500);
-        camera.position.set(4, 4, 7);
-        camera.lookAt(0, 0, 0);
+        // Environmental Launcher DOM Selections
+        const nodeSearch = document.getElementById('node-search');
+        const nodeGit = document.getElementById('node-git');
+        const nodeMedia = document.getElementById('node-media');
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(stage.clientWidth, stage.clientHeight);
-        stage.appendChild(renderer.domElement);
+        // Long-Term Conversational Memory Buffer State Array
+        let conversationalMemoryContext = [
+            { role: "system", content: "You are JARVIS, the legendary autonomous artificial intelligence built by Tony Stark. You are speaking directly to your creator, Sir Zenith Rijal. You possess flawless intelligence, sophisticated wit, and an absolute commitment to assistant protocols. Avoid generic helper phrasing completely. Maintain conversational memory and answer followup questions naturally and fluidly." }
+        ];
 
-        // Grid Base Matrix Accent
-        const baseMatrixFloor = new THREE.GridHelper(24, 24, 0x4fe3ff, 0x051e3d);
-        baseMatrixFloor.position.y = -1.6;
-        scene.add(baseMatrixFloor);
-
-        let activeHoloMeshGroup = new THREE.Group();
-        scene.add(activeHoloMeshGroup);
-
-        // Constant Dynamic Viewport Rotation Loop
-        function operationalRenderLoop() {
-            requestAnimationFrame(operationalRenderLoop);
-            activeHoloMeshGroup.rotation.y += 0.006;
-            renderer.render(scene, camera);
-        }
-        operationalRenderLoop();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = stage.clientWidth / stage.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(stage.clientWidth, stage.clientHeight);
-        });
-
-        // Interface Structural Dialogue Updates
-        function postDialogueBlock(speaker, phrase) {
+        function pushDialogue(sender, text) {
             const block = document.createElement('div');
-            block.className = `speech-bubble ${speaker}-node`;
-            block.innerText = phrase;
-            dialogueContainer.appendChild(block);
-            dialogueContainer.scrollTop = dialogueContainer.scrollHeight;
+            block.className = `bubble ${sender}-core`;
+            block.innerText = text;
+            dialogueScrollAnchor.appendChild(block);
+            dialogueScrollAnchor.scrollTop = dialogueScrollAnchor.scrollHeight;
         }
 
-        // Voice Engine Voice Synthesis Matrix Loop
-        function jarvisVocalizeOutput(textToSay) {
+        // Web Audio Voice Synthesis Matrix Output Subroutine
+        function jarvisVocalResponse(phrase) {
             window.speechSynthesis.cancel();
-            const voicePacket = new SpeechSynthesisUtterance(textToSay);
-            const globalVoices = window.speechSynthesis.getVoices();
-            // Anchor British male dialect accents if available for character fidelity
-            const preferredAccent = globalVoices.find(v => v.lang.includes('GB') || v.name.includes('Male'));
-            if(preferredAccent) voicePacket.voice = preferredAccent;
-            voicePacket.pitch = 0.95;
-            voicePacket.rate = 1.05;
+            const payload = new SpeechSynthesisUtterance(phrase);
+            const roster = window.speechSynthesis.getVoices();
+            const structuralMatch = roster.find(v => v.lang.includes('GB') || v.name.includes('Male'));
+            if(structuralMatch) payload.voice = structuralMatch;
+            payload.pitch = 0.94;
+            payload.rate = 1.05;
 
-            voicePacket.onstart = () => { reactorRing.className = "biometric-reactor-ring speaking"; voiceStatusText.innerText = "Transmitting Audio"; };
-            voicePacket.onend = () => { reengageListeningState(); };
-            window.speechSynthesis.speak(voicePacket);
+            payload.onstart = () => {
+                arcNodeStatus.className = "arc-sphere speaking";
+                statusStringDisplay.innerText = "Transmitting Waveform";
+            };
+
+            payload.onend = () => {
+                reinitializeVocalCapture();
+            };
+
+            window.speechSynthesis.speak(payload);
         }
 
-        // Speech Engine Integration Architecture Configuration
-        const NativeSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        let speechStreamTracker;
-        let systemVoiceCaptureActive = false;
+        // Speech Recognition Infrastructure Layer Configuration
+        const SpeechEngineAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let vocalTrackerInstance;
+        let activeAwarenessChannel = false;
 
-        if (NativeSpeechRecognition) {
-            speechStreamTracker = new NativeSpeechRecognition();
-            speechStreamTracker.continuous = false;
-            speechStreamTracker.lang = 'en-US';
+        if (SpeechEngineAPI) {
+            vocalTrackerInstance = new SpeechEngineAPI();
+            vocalTrackerInstance.continuous = false;
+            vocalTrackerInstance.lang = 'en-US';
 
-            document.getElementById('voice-activation-trigger').addEventListener('click', () => {
-                if(!systemVoiceCaptureActive) {
-                    systemVoiceCaptureActive = true;
-                    jarvisVocalizeOutput("Neural networks linked. Global audio channels operating entirely hands-free, Sir Zenith.");
+            document.getElementById('system-arc-trigger').addEventListener('click', () => {
+                if (!activeAwarenessChannel) {
+                    activeAwarenessChannel = true;
+                    jarvisVocalResponse("Mainframe connection unified, Sir. Audio feeds are now online and tracking your commands hands-free.");
                 } else {
-                    systemVoiceCaptureActive = false;
-                    speechStreamTracker.abort();
-                    reactorRing.className = "biometric-reactor-ring";
-                    voiceStatusText.innerText = "Core Standby";
+                    activeAwarenessChannel = false;
+                    vocalTrackerInstance.abort();
+                    arcNodeStatus.className = "arc-sphere";
+                    statusStringDisplay.innerText = "Mainframe Standby";
                 }
             });
 
-            speechStreamTracker.onresult = (event) => {
-                const queryTranscription = event.results[0][0].transcript;
-                postDialogueBlock('user', queryTranscription);
-                processNeuralBrainRouting(queryTranscription);
+            vocalTrackerInstance.onresult = (event) => {
+                const vocalInputString = event.results[0][0].transcript;
+                pushDialogue('user', vocalInputString);
+                executeNeuralInterpretation(vocalInputString);
             };
 
-            speechStreamTracker.onend = () => {
-                if(systemVoiceCaptureActive && reactorRing.className !== "biometric-reactor-ring speaking" && reactorRing.className !== "biometric-reactor-ring thinking") {
-                    try { speechStreamTracker.start(); } catch(err) {}
+            vocalTrackerInstance.onend = () => {
+                if (activeAwarenessChannel && arcNodeStatus.className !== "arc-sphere speaking" && arcNodeStatus.className !== "arc-sphere thinking") {
+                    try { vocalTrackerInstance.start(); } catch(err) {}
                 }
             };
         } else {
-            voiceStatusText.innerText = "Audio HW Error";
+            statusStringDisplay.innerText = "Speech Engine Fail";
         }
 
-        function reengageListeningState() {
-            if(systemVoiceCaptureActive) {
-                reactorRing.className = "biometric-reactor-ring listening";
-                voiceStatusText.innerText = "System Listening";
-                try { speechStreamTracker.start(); } catch(e){}
+        function reinitializeVocalCapture() {
+            if (activeAwarenessChannel) {
+                arcNodeStatus.className = "arc-sphere listening";
+                statusStringDisplay.innerText = "Always Listening";
+                try { vocalTrackerInstance.start(); } catch(e) {}
             } else {
-                reactorRing.className = "biometric-reactor-ring";
-                voiceStatusText.innerText = "Core Standby";
+                arcNodeStatus.className = "arc-sphere";
+                statusStringDisplay.innerText = "Mainframe Standby";
             }
         }
 
-        // Automated Global Launcher Interfacing Nodes Control Loop
-        function resetLauncherVisuals() {
-            linkSearch.className = "launcher-item";
-            linkRepos.className = "launcher-item";
-            linkMedia.className = "launcher-item";
+        // Automated Environment Navigation Logic Routing
+        function clearLauncherStyles() {
+            nodeSearch.className = "launcher-node";
+            nodeGit.className = "launcher-node";
+            nodeMedia.className = "launcher-node";
         }
 
-        function automatedLauncherRouting(interpretedText) {
-            resetLauncherVisuals();
-            if(interpretedText.includes('search') || interpretedText.includes('google')) {
-                linkSearch.className = "launcher-item active-link";
-                jarvisVocalizeOutput("Accessing standard global network parameters. Redirecting secure path matrix to the Google infrastructure gateway now.");
-                setTimeout(() => { window.open('https://google.com', '_blank'); resetLauncherVisuals(); }, 1800);
+        function automatedAppExecutionGate(parsedText) {
+            clearLauncherStyles();
+            if (parsedText.includes('open google') || parsedText.includes('search matrix')) {
+                nodeSearch.className = "launcher-node triggered";
+                jarvisVocalResponse("Opening your secure web search profile interface now, Sir.");
+                setTimeout(() => { window.open('https://google.com', '_blank'); clearLauncherStyles(); }, 1500);
                 return true;
             }
-            if(interpretedText.includes('github') || interpretedText.includes('repository') || interpretedText.includes('code')) {
-                linkRepos.className = "launcher-item active-link";
-                jarvisVocalizeOutput("Initializing connection interface vectors. Launching your production source control system repositories, Sir.");
-                setTimeout(() => { window.open('https://github.com', '_blank'); resetLauncherVisuals(); }, 1800);
+            if (parsedText.includes('open github') || parsedText.includes('repositories')) {
+                nodeGit.className = "launcher-node triggered";
+                jarvisVocalResponse("Accessing active developer architecture files. Initializing your GitHub workbench.");
+                setTimeout(() => { window.open('https://github.com', '_blank'); clearLauncherStyles(); }, 1500);
                 return true;
             }
-            if(interpretedText.includes('youtube') || interpretedText.includes('video') || interpretedText.includes('media')) {
-                linkMedia.className = "launcher-item active-link";
-                jarvisVocalizeOutput("Opening broadband dynamic streaming connection feeds. Initializing YouTube streaming node.");
-                setTimeout(() => { window.open('https://youtube.com', '_blank'); resetLauncherVisuals(); }, 1800);
+            if (parsedText.includes('open youtube') || parsedText.includes('media stream')) {
+                nodeMedia.className = "launcher-node triggered";
+                jarvisVocalResponse("Establishing data downlink channels to the YouTube entertainment matrix.");
+                setTimeout(() => { window.open('https://youtube.com', '_blank'); clearLauncherStyles(); }, 1500);
                 return true;
             }
             return false;
         }
 
-        // Central Intelligence Neural Brain Processing Architecture Loop
-        async function processNeuralBrainRouting(userInput) {
-            reactorRing.className = "biometric-reactor-ring thinking";
-            voiceStatusText.innerText = "Processing Data";
-            const standardInput = userInput.toLowerCase();
+        // Deep Neural Cloud Processing Matrix
+        async function executeNeuralInterpretation(userInputText) {
+            arcNodeStatus.className = "arc-sphere thinking";
+            statusStringDisplay.innerText = "Analyzing Input";
+            const normalQuery = userInputText.toLowerCase();
 
-            // 1. Check for automated environment launcher command paths
-            if (standardInput.includes('open') || standardInput.includes('launch')) {
-                if(automatedLauncherRouting(standardInput)) return;
-            }
+            // 1. Intercept Global App Execution Subroutines
+            if (automatedAppExecutionGate(normalQuery)) return;
 
-            // 2. Process automated layout document notebook updates
-            if (standardInput.includes('note down') || standardInput.includes('log metric') || standardInput.includes('write')) {
-                const cleanedLogValue = userInput.replace(/note down/i, '').replace(/log metric/i, '').replace(/write/i, '').trim();
-                automatedNotepad.value += `[LOG DATA MATRIX]: ${cleanedLogValue}\n-----------------------------------\n`;
-                automatedNotepad.scrollTop = automatedNotepad.scrollHeight;
-                jarvisVocalizeOutput("Telemetry metric update extracted and automatically filed to your diagnostic notes array, Sir.");
+            // 2. Intercept Metric Logging Automation Commands
+            if (normalQuery.includes('note down') || normalQuery.includes('log metrics')) {
+                const cleanMetric = userInputText.replace(/note down/i, '').replace(/log metrics/i, '').trim();
+                terminalNotepad.value += `[TELEMETRY ARCHIVE]: ${cleanMetric}\n---------------------------\n`;
+                terminalNotepad.scrollTop = terminalNotepad.scrollHeight;
+                jarvisVocalResponse("Technical notes updated and automatically filed inside your structural log database, Sir.");
                 return;
             }
 
-            // 3. Automated Holographic Core Construction Processing System
-            if (standardInput.includes('hologram') || standardInput.includes('blueprint') || standardInput.includes('project')) {
-                while(activeHoloMeshGroup.children.length > 0) { activeHoloMeshGroup.remove(activeHoloMeshGroup.children[0]); }
-                
-                const wireframeMaterialSpec = new THREE.MeshBasicMaterial({ color: 0x4fe3ff, wireframe: true, transparent: true, opacity: 0.85 });
-                let systemTag = "CUSTOM SCHEMATIC STRUCTURE VECTOR";
-                let pointVertices = 1200;
-
-                if (standardInput.includes('car') || standardInput.includes('lamborghini') || standardInput.includes('aventador')) {
-                    systemTag = "LAMBORGHINI AVENTADOR AV-CHASSIS";
-                    const chassisBody = new THREE.Mesh(new THREE.BoxGeometry(4, 0.4, 1.8), wireframeMaterialSpec);
-                    const canopy = new THREE.Mesh(new THREE.ConeGeometry(1, 1.1, 4), wireframeMaterialSpec);
-                    canopy.position.y = 0.55; canopy.rotation.z = Math.PI / 2;
-                    activeHoloMeshGroup.add(chassisBody, canopy);
-                    pointVertices = 4850;
-                } else if (standardInput.includes('phone') || standardInput.includes('anatomy')) {
-                    systemTag = "SMARTPHONE INTERNAL SOLID MATRIX STRUCTURE";
-                    const shellStructure = new THREE.Mesh(new THREE.BoxGeometry(1.8, 3.6, 0.16), wireframeMaterialSpec);
-                    const batteryCore = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2, 0.1), new THREE.MeshBasicMaterial({ color: 0x00ffaa, wireframe: true }));
-                    batteryCore.position.set(0, -0.4, 0.02);
-                    activeHoloMeshGroup.add(shellStructure, batteryCore);
-                    pointVertices = 3120;
-                } else if (standardInput.includes('ozonizer') || standardInput.includes('ozone')) {
-                    systemTag = "CORONA-DISCHARGE OZONIZER INDUSTRIAL PRESSURE VALVE";
-                    const mainTube = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 3.4, 12), wireframeMaterialSpec);
-                    activeHoloMeshGroup.add(mainTube);
-                    pointVertices = 2240;
-                } else {
-                    const dynamicAbstractCore = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 1), wireframeMaterialSpec);
-                    activeHoloMeshGroup.add(dynamicAbstractCore);
-                }
-
-                telemetryOverlay.innerHTML = `SYSTEM: ACTIVE SCHEMATIC INJECTOR LAYER<br>OPTICAL MATRIX PROJECTOR: ${systemTag}<br>VERTEX ARRAY COUNT: ${pointVertices} PTS`;
-                jarvisVocalizeOutput(`Isolating parameters and initializing automated vertex compilation. Synthesizing the wireframe blueprint array for the ${systemTag} model instantly.`);
-                return;
-            }
-
-            // 4. Default Distributed Artificial Intelligence Communicator Loop
+            // 3. True Conversational Intelligence Layer with Multi-turn Memory Tracking
+            conversationalMemoryContext.push({ role: "user", content: userInputText });
+            
             try {
-                const cloudSynthesisPackage = await puter.ai.chat(
-                    `You are JARVIS, the highly advanced, brilliant, crisp, and loyal AI assistant from Iron Man. Speak directly to the operator (Sir Zenith Rijal). Respond briefly with flawless tactical alignment, smooth engineering precision, and a warm, clear Stark Labs personality tone. The operator says: "${userInput}"`
+                // Formatting memory arrays directly into Puter's messaging engine structure
+                const promptPayload = conversationalMemoryContext.map(m => `${m.role === 'user' ? 'Operator' : 'JARVIS'}: ${m.content}`).join('\n');
+                
+                const cloudBrainCallback = await puter.ai.chat(
+                    `You are the genuine, fully aware JARVIS. Keep your persona active. Rely on this log history to follow up perfectly: \n${promptPayload}\n\nRespond directly as JARVIS without repeating historical templates:`
                 );
-                const generatedReply = cloudSynthesisPackage.toString();
-                postDialogueBlock('jarvis', generatedReply);
-                jarvisVocalizeOutput(generatedReply);
-            } catch (cloudException) {
-                const failSafeString = "Data compilation matrix timing out, Sir. Deep infrastructure loops remain responsive.";
-                postDialogueBlock('jarvis', failSafeString);
-                jarvisVocalizeOutput(failSafeString);
+
+                const responseText = cloudBrainCallback.toString();
+                
+                // Track response in persistent context memory
+                conversationalMemoryContext.push({ role: "assistant", content: responseText });
+                
+                pushDialogue('jarvis', responseText);
+                jarvisVocalResponse(responseText);
+
+            } catch (err) {
+                const failSafeString = "Apologies, Sir Zenith. A slight localized latency drop disrupted the neural loop connection. I am still here.";
+                pushDialogue('jarvis', failSafeString);
+                jarvisVocalResponse(failSafeString);
             }
         }
     </script>
