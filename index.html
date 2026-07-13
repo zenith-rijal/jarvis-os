@@ -3,421 +3,440 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Core V3 - Sir Zenith Rijal</title>
-    <!-- Serverless Frontend AI Linkage Library -->
+    <title>J.A.R.V.I.S. Mainframe v6.0 - Advanced Holo-Synthesis</title>
+    <!-- Serverless Core & Hardware-Accelerated 3D Engines -->
     <script src="https://js.puter.com/v2/"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #010409;
+            background-color: #020813;
             color: #00f0ff;
             font-family: 'Courier New', Courier, monospace;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+            text-shadow: 0 0 5px rgba(0, 240, 255, 0.3);
         }
-        .bg-overlay {
+        
+        .hud-grid {
             position: fixed;
             width: 100vw;
             height: 100vh;
-            background-image: linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background: linear-gradient(rgba(0, 240, 255, 0.015) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 240, 255, 0.015) 1px, transparent 1px);
             background-size: 30px 30px;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
+        .scanline {
+            position: fixed;
+            width: 100vw;
+            height: 6px;
+            background: rgba(0, 240, 255, 0.03);
+            top: 0;
+            z-index: 2;
+            animation: sweep 10s linear infinite;
+            pointer-events: none;
+        }
+
         header {
             z-index: 10;
-            background: rgba(2, 9, 22, 0.95);
+            background: rgba(2, 10, 28, 0.95);
             border-bottom: 2px solid #00f0ff;
-            padding: 1.2rem 2rem;
+            padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
         }
-        .title-block h1 { font-size: 1.5rem; letter-spacing: 4px; font-weight: bold; }
-        .title-block p { font-size: 0.8rem; color: #a5f3ff; font-weight: bold; }
-        nav { display: flex; gap: 0.8rem; }
-        .nav-link {
-            background: transparent;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            color: #00f0ff;
-            padding: 0.6rem 1.4rem;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            transition: all 0.2s ease;
-        }
-        .nav-link.active, .nav-link:hover {
-            background: #00f0ff;
-            color: #010409;
-            box-shadow: 0 0 15px #00f0ff;
-            border-color: #00f0ff;
-        }
-        main { position: relative; z-index: 5; flex: 1; padding: 2rem; display: flex; justify-content: center; }
-        .window-panel {
-            display: none;
-            width: 100%;
-            max-width: 950px;
-            background: rgba(2, 9, 22, 0.85);
-            border: 1px solid #00f0ff;
-            border-radius: 4px;
-            padding: 2rem;
-            box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.08);
-        }
-        .window-panel.active-panel { display: block; }
-        
-        /* Central Core Mechanics */
-        .core-deck { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
-        .reactor-shell {
+        .title-group h1 { font-size: 1.3rem; letter-spacing: 4px; font-weight: 900; color: #fff; }
+        .title-group p { font-size: 0.7rem; color: #8ae2ff; }
+
+        .workspace-wrapper {
             position: relative;
-            width: 180px;
-            height: 180px;
-            border: 4px dashed #00f0ff;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 12px;
+            padding: 12px;
+            flex: 1;
+        }
+
+        .sidebar-panel {
+            background: rgba(2, 12, 32, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+        .panel-heading {
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.4);
+            padding-bottom: 4px;
+            font-weight: bold;
+            color: #fff;
+            letter-spacing: 2px;
+        }
+
+        /* Reformed UI High-Capacity Viewport */
+        .hologram-viewport-deck {
+            width: 100%;
+            height: 480px;
+            background: #000105;
+            border: 1px solid #00f0ff;
+            box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        .viewport-hud-specs {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            font-size: 0.75rem;
+            color: #00f0ff;
+            background: rgba(1, 8, 22, 0.85);
+            padding: 6px 12px;
+            border-left: 3px solid #ffaa00;
+            pointer-events: none;
+            z-index: 4;
+            max-width: 80%;
+        }
+
+        .arc-reactor-node {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #00f0ff;
             border-radius: 50%;
             animation: spinCW 20s linear infinite;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.4s ease;
         }
-        .reactor-shell::before {
-            content: '';
-            position: absolute;
-            width: 140px;
-            height: 140px;
-            border: 2px dotted #00ffff;
-            border-radius: 50%;
-            animation: spinCCW 8s linear infinite;
-        }
-        .reactor-heart {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,240,255,1) 0%, rgba(1,4,9,1) 85%);
-            box-shadow: 0 0 35px #00f0ff;
-            transition: all 0.3s ease;
-        }
-        
-        /* State Indicators */
-        .listening .reactor-heart { background: radial-gradient(circle, #ff0055 0%, #010409 85%); box-shadow: 0 0 40px #ff0055; }
-        .listening { border-color: #ff0055; box-shadow: 0 0 25px rgba(255, 0, 85, 0.3); }
-        .processing .reactor-heart { background: radial-gradient(circle, #ffaa00 0%, #010409 85%); box-shadow: 0 0 40px #ffaa00; }
-        .processing { border-color: #ffaa00; box-shadow: 0 0 25px rgba(255, 170, 0, 0.3); }
-        .offline-mode { border-color: #555 !important; box-shadow: none !important; }
-        .offline-mode .reactor-heart { background: #222 !important; box-shadow: none !important; }
+        .arc-reactor-node.listening { border-color: #ff0055; animation-duration: 5s; }
+        .arc-reactor-node.processing { border-color: #ffaa00; animation-duration: 2s; }
+        .core-glow { width: 30px; height: 30px; border-radius: 50%; background: #00f0ff; box-shadow: 0 0 15px #00f0ff; }
+        .listening .core-glow { background: #ff0055; box-shadow: 0 0 15px #ff0055; }
+        .processing .core-glow { background: #ffaa00; box-shadow: 0 0 15px #ffaa00; }
 
-        /* Sound Spectrum Mock Simulation */
-        .visualizer-rack { display: flex; gap: 4px; height: 30px; align-items: flex-end; margin-top: 0.5rem; }
-        .bar { width: 6px; height: 5px; background: #00f0ff; transition: height 0.15s ease; }
-        .listening .bar { background: #ff0055; }
-
-        .terminal-display {
-            background: #000;
+        .terminal-readout-stream {
+            background: #00020a;
             border: 1px solid rgba(0, 240, 255, 0.2);
-            padding: 1.2rem;
-            height: 220px;
+            padding: 1rem;
+            height: 150px;
             overflow-y: auto;
-            font-size: 0.88rem;
-            color: #8ae2ff;
-            margin-bottom: 1rem;
-            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #a5f3ff;
+            margin: 10px 0;
         }
-        .input-row { display: flex; gap: 0.6rem; }
-        input[type="text"] {
-            flex: 1;
-            background: #000;
-            border: 1px solid #00f0ff;
-            color: #00f0ff;
-            padding: 0.7rem;
-            font-family: inherit;
-            outline: none;
+        .input-row { display: flex; gap: 0.5rem; }
+        .terminal-field {
+            flex: 1; background: #000; border: 1px solid #00f0ff;
+            color: #00f0ff; padding: 0.7rem; font-family: inherit; outline: none;
         }
-        .btn {
-            background: transparent;
-            border: 1px solid #00f0ff;
-            color: #00f0ff;
-            padding: 0.7rem 1.6rem;
-            cursor: pointer;
-            font-family: inherit;
-            font-weight: bold;
-            text-transform: uppercase;
-            transition: all 0.2s;
+        .action-node-btn {
+            background: transparent; border: 1px solid #00f0ff; color: #00f0ff;
+            padding: 0.6rem 1.5rem; cursor: pointer; font-family: inherit; font-weight: bold;
+            text-transform: uppercase; font-size: 0.8rem; transition: all 0.2s;
         }
-        .btn:hover { background: #00f0ff; color: #010409; box-shadow: 0 0 10px #00f0ff; }
-        .btn-danger { border-color: #ff0055; color: #ff0055; }
-        .btn-danger:hover { background: #ff0055; color: #fff; box-shadow: 0 0 10px #ff0055; }
+        .action-node-btn:hover { background: #00f0ff; color: #020813; box-shadow: 0 0 12px #00f0ff; }
 
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
-        .card { border: 1px dashed rgba(0, 240, 255, 0.4); padding: 1.2rem; background: rgba(0,0,0,0.4); border-radius: 4px; }
-        .card h4 { margin-bottom: 0.6rem; color: #fff; }
-        .card input {
-            width: 100%; margin-bottom: 0.6rem; background: #000; border: 1px solid rgba(0, 240, 255, 0.3);
-            color: #00f0ff; padding: 0.4rem; font-size: 0.85rem;
+        .idea-chip {
+            background: rgba(0, 240, 255, 0.03); border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 8px; font-size: 0.75rem; cursor: pointer; color: #8ae2ff; transition: all 0.2s;
         }
-        .stat-line { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(0,240,255,0.1); font-size: 0.9rem; }
+        .idea-chip:hover { background: rgba(0, 240, 255, 0.15); border-color: #00f0ff; color: #fff; }
 
+        @keyframes sweep { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
         @keyframes spinCW { 100% { transform: rotate(360deg); } }
-        @keyframes spinCCW { 100% { transform: rotate(-360deg); } }
+
+        @media(max-width: 850px) {
+            .workspace-wrapper { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
+    <div class="hud-grid"></div>
+    <div class="scanline"></div>
 
     <header>
-        <div class="title-block">
-            <h1>J.A.R.V.I.S. Mainframe Matrix</h1>
-            <p id="operator-banner">OPERATOR PROTOCOL: SIR ZENITH RIJAL [ONLINE]</p>
+        <div class="title-group">
+            <h1>J.A.R.V.I.S. INTERACTIVE HOLO-DECK</h1>
+            <p>ADVANCED SCHEMATIC COMPILER // OPERATOR: SIR ZENITH RIJAL</p>
         </div>
-        <nav>
-            <button class="nav-link active" onclick="navigate('core-panel')">Main Core</button>
-            <button class="nav-link" onclick="navigate('links-panel')">Links Node</button>
-            <button class="nav-link" onclick="navigate('environ-panel')">Environment</button>
-        </nav>
+        <button class="action-node-btn" id="audio-toggle-btn" style="font-size:0.75rem; padding:6px 12px;">Initialize Audio Link</button>
     </header>
 
-    <main>
-        <!-- TABS VIEW 1: MAIN MATRIX TERMINAL -->
-        <div id="core-panel" class="window-panel active-panel">
-            <div class="core-deck">
-                <div class="reactor-shell" id="reactor-box">
-                    <div class="reactor-heart"></div>
-                </div>
-                <div class="visualizer-rack" id="wave-rack">
-                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                </div>
-                <div style="display: flex; gap: 1rem;">
-                    <button class="btn" id="boot-system-btn">Initialize System Link</button>
-                    <button class="btn btn-danger" id="kill-system-btn" style="display:none;">Kill Core Matrix</button>
-                </div>
+    <div class="workspace-wrapper">
+        <!-- REFORMED COMPACT CONTROL PANEL -->
+        <div class="sidebar-panel">
+            <div class="arc-reactor-node" id="reactor-core"><div class="core-glow"></div></div>
+            
+            <div class="panel-heading">COMPLEX IDEAS PROTOCOL</div>
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <div class="idea-chip" onclick="executeHoloCommand('Generate blueprint of a Lamborghini Aventador chassis')">🏎️ Lamborghini Aventador</div>
+                <div class="idea-chip" onclick="executeHoloCommand('Synthesize internal anatomy schematic of a modern smartphone')">📱 Smartphone Internal Anatomy</div>
+                <div class="idea-chip" onclick="executeHoloCommand('Render engineering architecture of an industrial ozonizer loop')">⚡ Ozonizer Working Mechanism</div>
             </div>
-            <div class="terminal-display" id="terminal-screen">
-                [SYSTEM STATUS]: Awaiting secure confirmation clearance handshake from Sir Zenith Rijal...<br>
+
+            <div class="panel-heading">SYSTEM TELEMETRY</div>
+            <div id="telemetry-readouts" style="font-size: 0.75rem; display:flex; flex-direction:column; gap:4px;">
+                <!-- Telemetry streams here -->
             </div>
+        </div>
+
+        <!-- MAIN HIGH-CAPACITY VIEWPORT WORKSPACE -->
+        <div class="center-workspace">
+            <div class="hologram-viewport-deck" id="webgl-canvas-container">
+                <div class="viewport-hud-specs" id="blueprint-metadata">VIEWPORT METADATA: IDLE STATE // ENGINE STANDBY</div>
+            </div>
+
+            <div class="terminal-readout-stream" id="console-stream">
+                [SYSTEM READY]: Vector synthesis subroutines standing by. Type or say a complex design idea to begin holographic construction...<br>
+            </div>
+            
             <div class="input-row">
-                <input type="text" id="terminal-input" placeholder="Transmit explicit computational strings here...">
-                <button class="btn" id="execute-btn">Execute</button>
+                <input type="text" id="master-input-node" class="terminal-field" placeholder="Construct schematics (e.g., 'synthesize mechanical jet engine core blueprint')...">
+                <button class="action-node-btn" id="master-execute-btn">Compile</button>
             </div>
         </div>
-
-        <!-- TABS VIEW 2: DYNAMIC LINK REDIRECT ENGINE -->
-        <div id="links-panel" class="window-panel">
-            <h3>Central Network Routing System</h3>
-            <p style="font-size:0.8rem; color:#8ae2ff; margin-bottom:1.5rem;">Session configurations initialized for workspace environments.</p>
-            <div class="grid-layout">
-                <div class="card">
-                    <h4>GitHub Infrastructure</h4>
-                    <input type="text" id="target-github" value="https://github.com">
-                    <button class="btn" style="padding:0.4rem; font-size:0.75rem;" onclick="openTunnel('target-github')">Tunnel Connect</button>
-                </div>
-                <div class="card">
-                    <h4>LinkedIn Interface</h4>
-                    <input type="text" id="target-linkedin" value="https://linkedin.com">
-                    <button class="btn" style="padding:0.4rem; font-size:0.75rem;" onclick="openTunnel('target-linkedin')">Tunnel Connect</button>
-                </div>
-                <div class="card">
-                    <h4>Main Core Portfolio</h4>
-                    <input type="text" id="target-portfolio" value="https://zenithrijal.com.np">
-                    <button class="btn" style="padding:0.4rem; font-size:0.75rem;" onclick="openTunnel('target-portfolio')">Tunnel Connect</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- TABS VIEW 3: SYSTEM ENVIRONMENT LOG -->
-        <div id="environ-panel" class="window-panel">
-            <h3>Diagnostic Environment Parameters</h3>
-            <div style="margin-top:1rem;" id="diagnostics-box">
-                <div class="stat-line"><span>Target User Rank:</span><span>Sir Zenith Rijal [Level 5 Administrative Root]</span></div>
-                <div class="stat-line"><span>Mainframe Processor:</span><span>Puter.js Autonomous AI Router Node</span></div>
-                <div class="stat-line"><span>Local Browser Client Time:</span><span id="stat-time">Syncing...</span></div>
-                <div class="stat-line"><span>Geolocation Coordinates:</span><span id="stat-geo">Awaiting System Initialization</span></div>
-            </div>
-        </div>
-    </main>
+    </div>
 
     <script>
-        // Tab Navigation Router Logic
-        function navigate(targetId) {
-            document.querySelectorAll('.window-panel').forEach(p => p.classList.remove('active-panel'));
-            document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
-            document.getElementById(targetId).classList.add('active-panel');
-            event.target.classList.add('active');
-        }
-
-        function openTunnel(targetInputId) {
-            const endpoint = document.getElementById(targetInputId).value;
-            printLog(`[GATEWAY]: Punching secure navigation tunnel to ${endpoint}`);
-            window.open(endpoint, '_blank');
-        }
-
-        const screen = document.getElementById('terminal-screen');
-        function printLog(text) {
-            screen.innerHTML += `${text}<br>`;
-            screen.scrollTop = screen.scrollHeight;
-        }
-
-        // Live Environmental Synchronization Updates
-        function updateMetrics() {
-            document.getElementById('stat-time').innerText = new Date().toLocaleTimeString();
-        }
-        setInterval(updateMetrics, 1000);
-
-        // Core Systems Engineering Variables
-        const SpeechEngine = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const bootBtn = document.getElementById('boot-system-btn');
-        const killBtn = document.getElementById('kill-system-btn');
-        const reactorBox = document.getElementById('reactor-box');
-        const banner = document.getElementById('operator-banner');
+        const consoleStream = document.getElementById('console-stream');
+        const metadataDisplay = document.getElementById('blueprint-metadata');
         
-        let matrixActive = false;
-        let voiceRecog;
-        let speechHistory = []; // Basic persistent short-term contextual memory array
-
-        function jarvisVoiceSpeak(outputString) {
-            window.speechSynthesis.cancel();
-            const speechNode = new SpeechSynthesisUtterance(outputString);
-            const channelVoices = window.speechSynthesis.getVoices();
-            const ukMale = channelVoices.find(v => v.lang.includes('GB') || v.name.includes('Male'));
-            if(ukMale) speechNode.voice = ukMale;
-            speechNode.pitch = 0.9;
-            speechNode.rate = 1.05;
-            window.speechSynthesis.speak(speechNode);
+        function printLog(msg) {
+            consoleStream.innerHTML += `${msg}<br>`;
+            consoleStream.scrollTop = consoleStream.scrollHeight;
         }
 
-        // Simulates dynamic frequency waves in UI
-        function simulateWaves() {
-            if(!matrixActive || !reactorBox.className.includes('listening')) return;
-            document.querySelectorAll('.bar').forEach(b => {
-                b.style.height = `${Math.floor(Math.random() * 26) + 4}px`;
-            });
-            setTimeout(simulateWaves, 120);
+        // Initialize 3D Vector Viewport Space
+        const stage = document.getElementById('webgl-canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x020813, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(60, stage.clientWidth / stage.clientHeight, 0.1, 1000);
+        camera.position.set(4, 5, 7);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(stage.clientWidth, stage.clientHeight);
+        stage.appendChild(renderer.domElement);
+
+        // Core Holographic Ambient Lights
+        scene.add(new THREE.AmbientLight(0x001133));
+        const gridFloor = new THREE.GridHelper(30, 30, 0x00f0ff, 0x001133);
+        gridFloor.position.y = -2;
+        scene.add(gridFloor);
+
+        let activeHologramGroup = new THREE.Group();
+        scene.add(activeHologramGroup);
+
+        // Real-Time Rotation Loop
+        function frameLoop() {
+            requestAnimationFrame(frameLoop);
+            activeHologramGroup.rotation.y += 0.004;
+            renderer.render(scene, camera);
+        }
+        frameLoop();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = stage.clientWidth / stage.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(stage.clientWidth, stage.clientHeight);
+        });
+
+        // Speech Recognition Routing Layer
+        const SpeechEngine = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const audioBtn = document.getElementById('audio-toggle-btn');
+        const reactorCore = document.getElementById('reactor-core');
+        let voiceLinkActive = false;
+        let vocalTracker;
+
+        function jarvisSpeak(phrase) {
+            window.speechSynthesis.cancel();
+            const speechPackage = new SpeechSynthesisUtterance(phrase);
+            const machineVoices = window.speechSynthesis.getVoices();
+            const regionalVoice = machineVoices.find(v => v.lang.includes('GB') || v.name.includes('Male'));
+            if(regionalVoice) speechPackage.voice = regionalVoice;
+            speechPackage.pitch = 0.92;
+            speechPackage.rate = 1.05;
+            window.speechSynthesis.speak(speechPackage);
         }
 
         if(SpeechEngine) {
-            voiceRecog = new SpeechEngine();
-            voiceRecog.continuous = false;
-            voiceRecog.lang = 'en-US';
+            vocalTracker = new SpeechEngine();
+            vocalTracker.continuous = false;
+            vocalTracker.lang = 'en-US';
 
-            // Power On Deployment Sequence
-            bootBtn.addEventListener('click', () => {
-                matrixActive = true;
-                bootBtn.style.display = 'none';
-                killBtn.style.display = 'inline-block';
-                reactorBox.className = "reactor-shell";
-                banner.innerText = "OPERATOR PROTOCOL: SIR ZENITH RIJAL [ONLINE]";
-                
-                jarvisVoiceSpeak("Always a pleasure working with you, Sir Zenith. Systems are completely optimized and ready.");
-                printLog("[JARVIS]: Neural link initialized. Chat Persona profile: Friendly / High-Affinity Smart Butler.");
-                
-                // Fetch basic geolocation data under standard browser constraints
-                if(navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(pos => {
-                        document.getElementById('stat-geo').innerText = `${pos.coords.latitude.toFixed(2)}N, ${pos.coords.longitude.toFixed(2)}E`;
-                    }, () => { document.getElementById('stat-geo').innerText = "Access Flag Denied By Security"; });
+            audioBtn.addEventListener('click', () => {
+                voiceLinkActive = !voiceLinkActive;
+                if(voiceLinkActive) {
+                    audioBtn.innerText = "Mute Voice Link";
+                    reactorCore.className = "arc-reactor-node listening";
+                    jarvisSpeak("Holographic engine fully responsive, Sir Zenith. Direct your structural idea concepts.");
+                    startListeningCycle();
+                } else {
+                    audioBtn.innerText = "Initialize Audio Link";
+                    reactorCore.className = "arc-reactor-node";
+                    vocalTracker.abort();
                 }
-
-                audioCycleLoop();
             });
 
-            // Manual Power Off Click Core Override
-            killBtn.addEventListener('click', () => { executeSystemPowerDown(); });
-
-            function audioCycleLoop() {
-                if(!matrixActive) return;
-                try {
-                    reactorBox.className = "reactor-shell listening";
-                    simulateWaves();
-                    voiceRecog.start();
-                } catch(err){}
-            }
-
-            voiceRecog.onend = () => {
-                if(matrixActive && reactorBox.className.includes('listening')) {
-                    setTimeout(audioCycleLoop, 350);
-                }
-            };
-
-            voiceRecog.onresult = (evt) => {
-                const vocalInput = evt.results[0][0].transcript;
-                printLog(`[VOICE LINK]: "${vocalInput}"`);
-                evaluateNeuralDirectives(vocalInput);
+            function startListeningCycle() { if(voiceLinkActive) try { vocalTracker.start(); } catch(e){} }
+            vocalTracker.onend = () => { if(voiceLinkActive) setTimeout(startListeningCycle, 400); };
+            vocalTracker.onresult = (event) => {
+                const speechString = event.results[0][0].transcript;
+                printLog(`[VOCAL CORE]: "${speechString}"`);
+                executeHoloCommand(speechString);
             };
         }
 
-        document.getElementById('execute-btn').addEventListener('click', () => {
-            const inputField = document.getElementById('terminal-input');
-            if(inputField.value.trim() !== "") {
-                printLog(`[CONSOLE STRING]: "${inputField.value}"`);
-                evaluateNeuralDirectives(inputField.value);
-                inputField.value = "";
+        document.getElementById('master-execute-btn').addEventListener('click', () => {
+            const field = document.getElementById('master-input-node');
+            if(field.value.trim() !== "") {
+                printLog(`[MANUAL STACK]: "${field.value}"`);
+                executeHoloCommand(field.value);
+                field.value = "";
             }
         });
 
-        // System Power Down Pipeline Function
-        function executeSystemPowerDown() {
-            matrixActive = false;
-            jarvisVoiceSpeak("Understood, Sir Zenith. Powering down primary core relays. Have a splendid day.");
-            printLog("[JARVIS]: Mainframe core shutdown sequence complete. Systems entering Standby.");
-            banner.innerText = "OPERATOR PROTOCOL: SIR ZENITH RIJAL [STANDBY]";
-            
-            reactorBox.className = "reactor-shell offline-mode";
-            killBtn.style.display = 'none';
-            bootBtn.style.display = 'inline-block';
-            
-            document.querySelectorAll('.bar').forEach(b => b.style.height = '5px');
-            try { voiceRecog.abort(); } catch(e){}
-        }
+        // Advanced Procedural Synthesis Engine
+        async function executeHoloCommand(userInputString) {
+            reactorCore.className = "arc-reactor-node processing";
+            const normalQuery = userInputString.toLowerCase();
 
-        // Main Decision Routing Hub
-        async function evaluateNeuralDirectives(commandLine) {
-            const checkNormalized = commandLine.toLowerCase();
+            // Clear viewport grid before creating new models
+            while(activeHologramGroup.children.length > 0){ 
+                activeHologramGroup.remove(activeHologramGroup.children[0]); 
+            }
 
-            // EXPLICIT VERBAL POWER DOWN INTERCEPTS
-            if (checkNormalized.includes('go to sleep') || checkNormalized.includes('power down') || checkNormalized.includes('shutdown system')) {
-                executeSystemPowerDown();
+            // High-Tech Translucent Architectural Wireframe Setup
+            const structuralMaterial = new THREE.MeshBasicMaterial({
+                color: 0x00f0ff,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.75
+            });
+
+            let subAssemblies = [];
+            let focusedIdentity = "Experimental Array Node";
+
+            // Procedural Rule Sets for Target Systems
+            if (normalQuery.includes('lamborghini') || normalQuery.includes('aventador') || normalQuery.includes('car')) {
+                focusedIdentity = "Lamborghini Aventador SVJ [Chassis Blueprint Layer]";
+                
+                // Construct chassis base geometry
+                const chassisBase = new THREE.Mesh(new THREE.BoxGeometry(4.5, 0.4, 2), structuralMaterial);
+                const cabinShell = new THREE.Mesh(new THREE.ConeGeometry(1.2, 1.2, 4), structuralMaterial);
+                cabinShell.position.y = 0.6;
+                cabinShell.rotation.z = Math.PI / 2;
+                
+                activeHologramGroup.add(chassisBase);
+                activeHologramGroup.add(cabinShell);
+
+                // Add 4 independent wheel hub vectors
+                const positions = [[-1.6, -0.3, 1], [1.6, -0.3, 1], [-1.6, -0.3, -1], [1.6, -0.3, -1]];
+                positions.forEach(([x, y, z]) => {
+                    const wheelNode = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.4, 8), structuralMaterial);
+                    wheelNode.position.set(x, y, z);
+                    wheelNode.rotation.x = Math.PI / 2;
+                    activeHologramGroup.add(wheelNode);
+                });
+
+                subAssemblies = ["Aero Carbon Chassis Frame", "V12 Powertrain Engine Housing", "Active Hydraulic Suspension Hubs", "Pirelli Cyber-Tyre Vectors"];
+                
+            } else if (normalQuery.includes('phone') || normalQuery.includes('smartphone') || normalQuery.includes('anatomy')) {
+                focusedIdentity = "Smartphone Internal Hardware Anatomy Matrix";
+                
+                const enclosureOuter = new THREE.Mesh(new THREE.BoxGeometry(2.2, 4.2, 0.2), structuralMaterial);
+                activeHologramGroup.add( enclosureOuter );
+
+                // Internal stack components
+                const mainProcessorNode = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.08), new THREE.MeshBasicMaterial({color: 0xffaa00, wireframe: true}));
+                mainProcessorNode.position.set(0, 1, 0.02);
+                
+                const batteryPackElement = new THREE.Mesh(new THREE.BoxGeometry(1.6, 2.2, 0.1), new THREE.MeshBasicMaterial({color: 0x00ff88, wireframe: true}));
+                batteryPackElement.position.set(0, -0.6, 0.02);
+
+                const cameraArrayMatrix = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8), structuralMaterial);
+                cameraArrayMatrix.position.set(-0.6, 1.5, -0.05);
+                cameraArrayMatrix.rotation.x = Math.PI/2;
+
+                activeHologramGroup.add(mainProcessorNode, batteryPackElement, cameraArrayMatrix);
+                subAssemblies = ["Lithium-Ion Solid Electrolyte Subsystem", "Biometric Multi-Lens Camera Optic Layer", "SoC Octa-Core Silicon Cluster", "Copper Thermal Management Grid"];
+
+            } else if (normalQuery.includes('ozonizer') || normalQuery.includes('ozone') || normalQuery.includes('mechanism')) {
+                focusedIdentity = "Industrial Corona-Discharge Ozonizer Reactor";
+
+                const pressureVessel = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 3.8, 12), structuralMaterial);
+                activeHologramGroup.add(pressureVessel);
+
+                // Internal discharge electrodes
+                const internalAnodeDielectric = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 3.6, 8), new THREE.MeshBasicMaterial({color: 0xff0066, wireframe: true}));
+                activeHologramGroup.add(internalAnodeDielectric);
+
+                // Add surrounding field indicator rings
+                for(let i=0; i<4; i++) {
+                    const fieldRing = new THREE.Mesh(new THREE.TorusGeometry(0.6, 0.04, 6, 12), structuralMaterial);
+                    fieldRing.position.y = -1.2 + (i * 0.8);
+                    fieldRing.rotation.x = Math.PI / 2;
+                    activeHologramGroup.add(fieldRing);
+                }
+
+                subAssemblies = ["High-Frequency Corona Dielectric Tube", "Oxygen O2 Precursor Feed Manifold", "High Voltage High Frequency Power Transformer", "O3 Synthesis Extraction Port"];
+
+            } else {
+                // Generalized dynamic system processing via serverless Puter network
+                try {
+                    const brainAnswer = await puter.ai.chat(
+                        `You are JARVIS assisting Sir Zenith Rijal. He wants to synthesize a blueprint for: "${userInputString}". List 3 core real engineering sub-assemblies or raw technical sub-components that make up this item inside a single concise sentence.`
+                    );
+                    
+                    // Fallback visual model generation for unlisted user concepts
+                    const baseCoreCluster = new THREE.Mesh(new THREE.OctahedronGeometry(1.6, 1), structuralMaterial);
+                    const peripheralRing = new THREE.Mesh(new THREE.TorusGeometry(2.2, 0.06, 8, 24), structuralMaterial);
+                    peripheralRing.rotation.x = Math.PI / 3;
+                    activeHologramGroup.add(baseCoreCluster, peripheralRing);
+                    
+                    focusedIdentity = `Custom Construct: ${userInputString.toUpperCase()}`;
+                    subAssemblies = ["Central Framework Cluster", "Data Integration Loop", "External Interface Boundary"];
+                    
+                    printLog(`[JARVIS ARCHITECTURE]: ${brainAnswer}`);
+                    jarvisSpeak(brainAnswer.toString());
+                } catch(err) {
+                    printLog("[SYSTEM EXCEPTION]: Cloud processing interface timeout.");
+                }
+                resetState();
                 return;
             }
 
-            if (checkNormalized.includes('open my github') || checkNormalized.includes('launch github')) {
-                const urlPath = document.getElementById('target-github').value;
-                jarvisVoiceOutput("Right away, sir. Opening your structural source repository array.");
-                window.open(urlPath, '_blank');
-                return;
-            }
-
-            // Central Smart Brain Execution Logic
-            try {
-                reactorBox.className = "reactor-shell processing";
-                
-                // Conversational Persona Tuning Structure
-                const friendlyIdentityDirective = "You are JARVIS, the supportive, deeply loyal, and slightly witty AI assistant built for Iron Man. You are speaking with your creator, Sir Zenith Rijal. Never act like a rigid computer or generic search assistant; sound conversational, remarkably intelligent, adaptive, and highly charismatic. Keep your response under 3 sentences maximum and always reference him as Sir Zenith or Sir.";
-                
-                speechHistory.push(`User: ${commandLine}`);
-                if(speechHistory.length > 6) speechHistory.shift(); // Keep standard context limits stable
-                
-                const responsePayload = await puter.ai.chat(
-                    `${friendlyIdentityDirective} Recent Thread Context: [${speechHistory.join(' | ')}]`
-                );
-
-                const completeReplyText = responsePayload.toString();
-                speechHistory.push(`JARVIS: ${completeReplyText}`);
-                
-                printLog(`[JARVIS]: ${completeReplyText}`);
-                jarvisVoiceSpeak(completeReplyText);
-
-            } catch (networkError) {
-                console.error(networkError);
-                jarvisVoiceSpeak("My apologies, Sir Zenith. I seem to be having a bit of trouble reaching my deep logic network arrays.");
-            }
-
-            // Loop reset back into listening mode
-            setTimeout(() => {
-                if(matrixActive) audioCycleLoop();
-            }, 1200);
+            // Update UI metadata overlays and give verbal descriptions
+            metadataDisplay.innerHTML = `IDENTITY: ${focusedIdentity.toUpperCase()}<br>SUB-ASSEMBLIES LOADED:<br>${subAssemblies.map(sub => `-> ${sub.toUpperCase()}`).join('<br>')}`;
+            printLog(`[SYNTHESIS COMPLETE]: Constructed 3D vector model and structural layouts for: ${focusedIdentity}`);
+            jarvisSpeak(`Holographic rendering stack compiled successfully, Sir Zenith. Projecting the ${focusedIdentity} engine structures now.`);
+            
+            resetState();
         }
+
+        function resetState() {
+            if(voiceLinkActive) reactorCore.className = "arc-reactor-node listening";
+            else reactorCore.className = "arc-reactor-node";
+        }
+
+        // Continual Operational Telemetry Loop
+        setInterval(() => {
+            document.getElementById('telemetry-readouts').innerHTML = `
+                <div style="display:flex; justify-content:space-between;"><span>HOLO_RESONANCE:</span><span style="color:#fff;">98.4%</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>VECTOR_VERTICES:</span><span style="color:#fff;">${activeHologramGroup.children.length * 142} pts</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>MATRIX_STATUS:</span><span style="color:#00ff88;">ACTIVE</span></div>
+                <div style="display:flex; justify-content:space-between;"><span>COMPILER_LATENCY:</span><span style="color:#fff;">14ms</span></div>
+            `;
+        }, 400);
     </script>
 </body>
 </html>
