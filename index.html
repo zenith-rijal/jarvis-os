@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>J.A.R.V.I.S. Mainframe</title>
+    <!-- Puter.js Library: Provides free, keyless AI model routing from the frontend -->
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #020813;
+            color: #00f0ff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        .bg-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 1;
+        }
+        .container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            width: 90%;
+            max-width: 500px;
+        }
+        .jarvis-core {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            border: 4px dashed #00f0ff;
+            border-radius: 50%;
+            animation: rotateOuter 12s linear infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+            cursor: pointer;
+        }
+        .jarvis-core::before {
+            content: '';
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            border: 3px double #00f0ff;
+            border-radius: 50%;
+            animation: rotateInner 6s linear infinite reverse;
+        }
+        .jarvis-inner-circle {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, rgba(0,240,255,1) 0%, rgba(2,8,19,1) 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 40px #00f0ff;
+            transition: all 0.3s ease;
+        }
+        /* State Indicators */
+        .listening-state {
+            border-color: #ff0055 !important;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.4);
+        }
+        .listening-state .jarvis-inner-circle {
+            background: radial-gradient(circle, rgba(255,0,85,1) 0%, rgba(2,8,19,1) 70%);
+            box-shadow: 0 0 40px #ff0055;
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+        .thinking-state {
+            border-color: #e2a100 !important;
+            box-shadow: 0 0 30px rgba(226, 161, 0, 0.4);
+        }
+        .thinking-state .jarvis-inner-circle {
+            background: radial-gradient(circle, rgba(226,161,0,1) 0%, rgba(2,8,19,1) 70%);
+            box-shadow: 0 0 40px #e2a100;
+            animation: rotateInner 1s linear infinite;
+        }
+        .console {
+            background: rgba(2, 8, 19, 0.85);
+            border: 1px solid #00f0ff;
+            padding: 1.5rem;
+            width: 100%;
+            border-radius: 6px;
+            box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+        .status-tag {
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px dashed rgba(0, 240, 255, 0.3);
+            padding-bottom: 0.3rem;
+        }
+        .output-text {
+            min-height: 60px;
+            color: #8ae2ff;
+            line-height: 1.4;
+            font-size: 0.95rem;
+        }
+        button {
+            background: transparent;
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            padding: 0.8rem 2.5rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #00f0ff;
+            color: #020813;
+            box-shadow: 0 0 15px #00f0ff;
+        }
+        @keyframes rotateOuter { 100% { transform: rotate(360deg); } }
+        @keyframes rotateInner { 100% { transform: rotate(-360deg); } }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    
+    <div class="container">
+        <h2>J.A.R.V.I.S. Core Matrix</h2>
+        
+        <div class="jarvis-core" id="core-node">
+            <div class="jarvis-inner-circle"></div>
+        </div>
+
+        <button id="auth-btn">Initialize Brain Link</button>
+
+        <div class="console">
+            <div class="status-tag" id="status-node">SYSTEM STATUS: OFFLINE</div>
+            <div class="output-text" id="output-node">Press 'Initialize Brain Link' to bridge standard neural networks.</div>
+        </div>
+    </div>
+
+    <script>
+        const authBtn = document.getElementById('auth-btn');
+        const coreNode = document.getElementById('core-node');
+        const statusNode = document.getElementById('status-node');
+        const outputNode = document.getElementById('output-node');
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let activeListening = false;
+        let recognition;
+
+        function jarvisSpeak(text) {
+            window.speechSynthesis.cancel();
+            const speech = new SpeechSynthesisUtterance(text);
+            const voices = window.speechSynthesis.getVoices();
+            
+            // Match an English male voice profile for the butler effect
+            const maleVoice = voices.find(v => v.lang.includes('GB') || v.name.includes('Male') || v.lang.includes('US'));
+            if (maleVoice) speech.voice = maleVoice;
+            
+            speech.rate = 1.05;
+            speech.pitch = 0.85; 
+            window.speechSynthesis.speak(speech);
+        }
+
+        if (!SpeechRecognition) {
+            outputNode.innerText = "Critical Failure: Core Browser Speech Engine missing. Use Google Chrome or Microsoft Edge.";
+            authBtn.style.display = "none";
+        } else {
+            recognition = new SpeechRecognition();
+            recognition.continuous = false;
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+
+            authBtn.addEventListener('click', () => {
+                if(!activeListening) {
+                    activeListening = true;
+                    authBtn.style.display = 'none';
+                    jarvisSpeak("Neural network synchronized. I am online and operational, sir.");
+                    startListeningCycle();
+                }
+            });
+
+            function startListeningCycle() {
+                if (!activeListening) return;
+                try {
+                    coreNode.className = "jarvis-core listening-state";
+                    statusNode.innerText = "SYSTEM STATUS: LISTENING...";
+                    recognition.start();
+                } catch(e) { /* Catch active session overlaps safely */ }
+            }
+
+            recognition.onend = () => {
+                // Creates persistent active listing loop until 'shutdown' command runs
+                if (activeListening && coreNode.className.includes('listening-state')) {
+                    setTimeout(startListeningCycle, 300);
+                }
+            };
+
+            recognition.onresult = async (event) => {
+                const userPrompt = event.results[0][0].transcript;
+                outputNode.innerText = `Analyzing Voice Matrix: "${userPrompt}"`;
+                
+                // Switch HUD to processing mode
+                coreNode.className = "jarvis-core thinking-state";
+                statusNode.innerText = "SYSTEM STATUS: PROCESSING ARCHETYPE...";
+
+                const normalizedPrompt = userPrompt.toLowerCase();
+
+                // Hardwired Local Overrides
+                if (normalizedPrompt.includes('shut down') || normalizedPrompt.includes('go to sleep')) {
+                    jarvisSpeak("Deactivating central mainframe array. Standing down, sir.");
+                    outputNode.innerText = "System returned to standby state.";
+                    statusNode.innerText = "SYSTEM STATUS: STANDBY";
+                    coreNode.className = "jarvis-core";
+                    activeListening = false;
+                    recognition.abort();
+                    authBtn.style.display = 'block';
+                    return;
+                }
+
+                // AI Processing Gateway Block
+                try {
+                    const directiveContext = "You are JARVIS, Tony Stark's personal artificial intelligence. Answer efficiently, smoothly, showing vast scientific intellect. Address the speaker as 'sir'. Keep replies under 3 sentences.";
+                    
+                    // Puter routes this automatically to a high-capacity tier model for free
+                    const aiReport = await puter.ai.chat(
+                        `${directiveContext} Prompt: ${userPrompt}`
+                    );
+
+                    const finalResponseText = aiReport.toString();
+                    outputNode.innerText = finalResponseText;
+                    jarvisSpeak(finalResponseText);
+
+                } catch (apiError) {
+                    console.warn("Gateway bypassed, falling back to local storage routing.", apiError);
+                    // Local fallback responses if browser network drops out
+                    if (normalizedPrompt.includes('hello') || normalizedPrompt.includes('jarvis')) {
+                        jarvisSpeak("Hello sir. Cloud links are restricted, but basic matrix is solid.");
+                    } else {
+                        jarvisSpeak("I can hear you, sir, but my deep cloud processing centers are temporarily unreachable.");
+                    }
+                }
+
+                // Reset back to hearing state after finishing speaking
+                setTimeout(() => {
+                    if(activeListening) startListeningCycle();
+                }, 1000);
+            };
+        }
+        // Warm up voice modules on launch load
+        window.speechSynthesis.getVoices();
+    </script>
+</body>
+</html>
