@@ -3,405 +3,420 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Mainframe v2.0</title>
-    <!-- Puter.js: Provides serverless keyless AI model access straight from the frontend -->
+    <title>J.A.R.V.I.S. Core V3 - Sir Zenith Rijal</title>
+    <!-- Serverless Frontend AI Linkage Library -->
     <script src="https://js.puter.com/v2/"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: #020710;
+            background-color: #010409;
             color: #00f0ff;
             font-family: 'Courier New', Courier, monospace;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             overflow-x: hidden;
-            text-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+            text-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
         }
-        .bg-grid {
+        .bg-overlay {
             position: fixed;
             width: 100vw;
             height: 100vh;
-            background-image: linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            z-index: 0;
+            background-image: linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
             pointer-events: none;
+            z-index: 0;
         }
-        
-        /* Top Navigation Header */
         header {
             z-index: 10;
-            background: rgba(2, 11, 26, 0.9);
+            background: rgba(2, 9, 22, 0.95);
             border-bottom: 2px solid #00f0ff;
-            padding: 1rem 2rem;
+            padding: 1.2rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.2);
         }
-        .identity-tag h1 {
-            font-size: 1.4rem;
-            letter-spacing: 3px;
-        }
-        .identity-tag p {
-            font-size: 0.75rem;
-            color: #7ce7ff;
-        }
-        
-        /* Nav System Layout Tabs */
-        nav {
-            display: flex;
-            gap: 1rem;
-        }
-        .nav-btn {
+        .title-block h1 { font-size: 1.5rem; letter-spacing: 4px; font-weight: bold; }
+        .title-block p { font-size: 0.8rem; color: #a5f3ff; font-weight: bold; }
+        nav { display: flex; gap: 0.8rem; }
+        .nav-link {
             background: transparent;
-            border: 1px solid rgba(0, 240, 255, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.3);
             color: #00f0ff;
-            padding: 0.5rem 1.2rem;
+            padding: 0.6rem 1.4rem;
             cursor: pointer;
             font-family: inherit;
             font-weight: bold;
             transition: all 0.2s ease;
         }
-        .nav-btn.active, .nav-btn:hover {
+        .nav-link.active, .nav-link:hover {
             background: #00f0ff;
-            color: #020710;
-            box-shadow: 0 0 12px #00f0ff;
+            color: #010409;
+            box-shadow: 0 0 15px #00f0ff;
             border-color: #00f0ff;
         }
-
-        /* Main Screen Views */
-        main {
-            position: relative;
-            z-index: 5;
-            flex: 1;
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .page-view {
+        main { position: relative; z-index: 5; flex: 1; padding: 2rem; display: flex; justify-content: center; }
+        .window-panel {
             display: none;
             width: 100%;
-            max-width: 900px;
-            background: rgba(2, 11, 26, 0.85);
+            max-width: 950px;
+            background: rgba(2, 9, 22, 0.85);
             border: 1px solid #00f0ff;
             border-radius: 4px;
             padding: 2rem;
-            box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.1);
+            box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.08);
         }
-        .page-view.active-view {
-            display: block;
-        }
-
-        /* Holographic Core Graphic Component */
-        .core-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            margin: 1.5rem 0;
-        }
-        .jarvis-reactor {
+        .window-panel.active-panel { display: block; }
+        
+        /* Central Core Mechanics */
+        .core-deck { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+        .reactor-shell {
             position: relative;
-            width: 160px;
-            height: 160px;
-            border: 3px dashed #00f0ff;
+            width: 180px;
+            height: 180px;
+            border: 4px dashed #00f0ff;
             border-radius: 50%;
-            animation: spinRight 15s linear infinite;
+            animation: spinCW 20s linear infinite;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.4s ease;
         }
-        .jarvis-reactor::after {
+        .reactor-shell::before {
             content: '';
             position: absolute;
-            width: 120px;
-            height: 120px;
-            border: 2px double #00ffff;
+            width: 140px;
+            height: 140px;
+            border: 2px dotted #00ffff;
             border-radius: 50%;
-            animation: spinLeft 6s linear infinite;
+            animation: spinCCW 8s linear infinite;
         }
-        .reactor-center {
-            width: 60px;
-            height: 60px;
+        .reactor-heart {
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(0,240,255,1) 0%, rgba(2,7,16,1) 80%);
-            box-shadow: 0 0 30px #00f0ff;
+            background: radial-gradient(circle, rgba(0,240,255,1) 0%, rgba(1,4,9,1) 85%);
+            box-shadow: 0 0 35px #00f0ff;
             transition: all 0.3s ease;
         }
-        .listening .reactor-center {
-            background: radial-gradient(circle, #ff0055 0%, #020710 80%);
-            box-shadow: 0 0 35px #ff0055;
-        }
+        
+        /* State Indicators */
+        .listening .reactor-heart { background: radial-gradient(circle, #ff0055 0%, #010409 85%); box-shadow: 0 0 40px #ff0055; }
+        .listening { border-color: #ff0055; box-shadow: 0 0 25px rgba(255, 0, 85, 0.3); }
+        .processing .reactor-heart { background: radial-gradient(circle, #ffaa00 0%, #010409 85%); box-shadow: 0 0 40px #ffaa00; }
+        .processing { border-color: #ffaa00; box-shadow: 0 0 25px rgba(255, 170, 0, 0.3); }
+        .offline-mode { border-color: #555 !important; box-shadow: none !important; }
+        .offline-mode .reactor-heart { background: #222 !important; box-shadow: none !important; }
 
-        /* Console Utilities */
-        .console-log {
-            background: #010409;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            border-radius: 4px;
-            padding: 1rem;
-            height: 180px;
+        /* Sound Spectrum Mock Simulation */
+        .visualizer-rack { display: flex; gap: 4px; height: 30px; align-items: flex-end; margin-top: 0.5rem; }
+        .bar { width: 6px; height: 5px; background: #00f0ff; transition: height 0.15s ease; }
+        .listening .bar { background: #ff0055; }
+
+        .terminal-display {
+            background: #000;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 1.2rem;
+            height: 220px;
             overflow-y: auto;
+            font-size: 0.88rem;
+            color: #8ae2ff;
             margin-bottom: 1rem;
-            font-size: 0.85rem;
-            color: #a5f3ff;
+            border-radius: 4px;
         }
-        .action-bar {
-            display: flex;
-            gap: 0.5rem;
-        }
+        .input-row { display: flex; gap: 0.6rem; }
         input[type="text"] {
             flex: 1;
-            background: #010409;
+            background: #000;
             border: 1px solid #00f0ff;
             color: #00f0ff;
-            padding: 0.6rem;
+            padding: 0.7rem;
             font-family: inherit;
             outline: none;
         }
-        .action-btn {
+        .btn {
             background: transparent;
             border: 1px solid #00f0ff;
             color: #00f0ff;
-            padding: 0.6rem 1.5rem;
+            padding: 0.7rem 1.6rem;
             cursor: pointer;
             font-family: inherit;
             font-weight: bold;
             text-transform: uppercase;
+            transition: all 0.2s;
         }
-        .action-btn:hover {
-            background: #00f0ff;
-            color: #020710;
-        }
+        .btn:hover { background: #00f0ff; color: #010409; box-shadow: 0 0 10px #00f0ff; }
+        .btn-danger { border-color: #ff0055; color: #ff0055; }
+        .btn-danger:hover { background: #ff0055; color: #fff; box-shadow: 0 0 10px #ff0055; }
 
-        /* Profile & Link Management Styles */
-        .links-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1rem;
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+        .card { border: 1px dashed rgba(0, 240, 255, 0.4); padding: 1.2rem; background: rgba(0,0,0,0.4); border-radius: 4px; }
+        .card h4 { margin-bottom: 0.6rem; color: #fff; }
+        .card input {
+            width: 100%; margin-bottom: 0.6rem; background: #000; border: 1px solid rgba(0, 240, 255, 0.3);
+            color: #00f0ff; padding: 0.4rem; font-size: 0.85rem;
         }
-        .link-card {
-            border: 1px dashed rgba(0, 240, 255, 0.5);
-            padding: 1rem;
-            background: rgba(1, 4, 9, 0.6);
-            border-radius: 4px;
-        }
-        .link-card h4 { margin-bottom: 0.5rem; color: #fff; }
-        .link-card input {
-            width: 100%;
-            margin-bottom: 0.5rem;
-            background: #020710;
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            color: #8ae2ff;
-            padding: 0.3rem;
-            font-size: 0.8rem;
-        }
+        .stat-line { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid rgba(0,240,255,0.1); font-size: 0.9rem; }
 
-        /* Diagnostics Layout Elements */
-        .diag-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid rgba(0, 240, 255, 0.1);
-            font-size: 0.9rem;
-        }
-
-        @keyframes spinRight { 100% { transform: rotate(360deg); } }
-        @keyframes spinLeft { 100% { transform: rotate(-360deg); } }
+        @keyframes spinCW { 100% { transform: rotate(360deg); } }
+        @keyframes spinCCW { 100% { transform: rotate(-360deg); } }
     </style>
 </head>
 <body>
-    <div class="bg-grid"></div>
+    <div class="bg-overlay"></div>
 
     <header>
-        <div class="identity-tag">
-            <h1>J.A.R.V.I.S. OS</h1>
-            <p>AUTHORIZED OPERATOR: SIR ZENITH RIJAL</p>
+        <div class="title-block">
+            <h1>J.A.R.V.I.S. Mainframe Matrix</h1>
+            <p id="operator-banner">OPERATOR PROTOCOL: SIR ZENITH RIJAL [ONLINE]</p>
         </div>
         <nav>
-            <button class="nav-btn active" onclick="switchPage('core-page')">Core Matrix</button>
-            <button class="nav-btn" onclick="switchPage('profiles-page')">Links Engine</button>
-            <button class="nav-btn" onclick="switchPage('diag-page')">Diagnostics</button>
+            <button class="nav-link active" onclick="navigate('core-panel')">Main Core</button>
+            <button class="nav-link" onclick="navigate('links-panel')">Links Node</button>
+            <button class="nav-link" onclick="navigate('environ-panel')">Environment</button>
         </nav>
     </header>
 
     <main>
-        <!-- PAGE 1: CORE MATRIX CONTROL -->
-        <div id="core-page" class="page-view active-view">
-            <h3>Neural Core System Interface</h3>
-            <div class="core-wrapper">
-                <div class="jarvis-reactor" id="reactor-node">
-                    <div class="reactor-center"></div>
+        <!-- TABS VIEW 1: MAIN MATRIX TERMINAL -->
+        <div id="core-panel" class="window-panel active-panel">
+            <div class="core-deck">
+                <div class="reactor-shell" id="reactor-box">
+                    <div class="reactor-heart"></div>
                 </div>
-                <button class="action-btn" id="voice-toggle">Initialize Voice Array</button>
+                <div class="visualizer-rack" id="wave-rack">
+                    <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn" id="boot-system-btn">Initialize System Link</button>
+                    <button class="btn btn-danger" id="kill-system-btn" style="display:none;">Kill Core Matrix</button>
+                </div>
             </div>
-            <div class="console-log" id="terminal-screen">
-                [SYSTEM LOG]: Mainframe loaded. Awaiting verification check from Sir Zenith Rijal.<br>
+            <div class="terminal-display" id="terminal-screen">
+                [SYSTEM STATUS]: Awaiting secure confirmation clearance handshake from Sir Zenith Rijal...<br>
             </div>
-            <div class="action-bar">
-                <input type="text" id="keyboard-input" placeholder="Transmit standard command terminal parameters...">
-                <button class="action-btn" id="send-cmd-btn">Execute</button>
+            <div class="input-row">
+                <input type="text" id="terminal-input" placeholder="Transmit explicit computational strings here...">
+                <button class="btn" id="execute-btn">Execute</button>
             </div>
         </div>
 
-        <!-- PAGE 2: PROFILE LINKS CONTROL PANEL -->
-        <div id="profiles-page" class="page-view">
-            <h3>Central Network Routing Engine</h3>
-            <p style="font-size: 0.8rem; color: #7ce7ff; margin-bottom: 1rem;">Configure and jump directly to your managed environments.</p>
-            
-            <div class="links-grid">
-                <div class="link-card">
-                    <h4>GitHub Repository Central</h4>
-                    <input type="text" id="lnk-github" value="https://github.com">
-                    <button class="action-btn" style="padding:0.3rem 0.8rem; font-size:0.75rem;" onclick="launchUrl('lnk-github')">Launch Workspace</button>
+        <!-- TABS VIEW 2: DYNAMIC LINK REDIRECT ENGINE -->
+        <div id="links-panel" class="window-panel">
+            <h3>Central Network Routing System</h3>
+            <p style="font-size:0.8rem; color:#8ae2ff; margin-bottom:1.5rem;">Session configurations initialized for workspace environments.</p>
+            <div class="grid-layout">
+                <div class="card">
+                    <h4>GitHub Infrastructure</h4>
+                    <input type="text" id="target-github" value="https://github.com">
+                    <button class="btn" style="padding:0.4rem; font-size:0.75rem;" onclick="openTunnel('target-github')">Tunnel Connect</button>
                 </div>
-                <div class="link-card">
-                    <h4>Primary LinkedIn Profile</h4>
-                    <input type="text" id="lnk-linkedin" value="https://linkedin.com">
-                    <button class="action-btn" style="padding:0.3rem 0.8rem; font-size:0.75rem;" onclick="launchUrl('lnk-linkedin')">Launch Network</button>
+                <div class="card">
+                    <h4>LinkedIn Interface</h4>
+                    <input type="text" id="target-linkedin" value="https://linkedin.com">
+                    <button class="btn" style="padding:0.4rem; font-size:0.75rem;" onclick="openTunnel('target-linkedin')">Tunnel Connect</button>
                 </div>
-                <div class="link-card">
-                    <h4>Personal Portfolio Assets</h4>
-                    <input type="text" id="lnk-portfolio" value="https://zenithrijal.com.np">
-                    <button class="action-btn" style="padding:0.3rem 0.8rem; font-size:0.75rem;" onclick="launchUrl('lnk-portfolio')">Launch Target</button>
+                <div class="card">
+                    <h4>Main Core Portfolio</h4>
+                    <input type="text" id="target-portfolio" value="https://zenithrijal.com.np">
+                    <button class="btn" style="padding:0.4rem; font-size:0.75rem;" onclick="openTunnel('target-portfolio')">Tunnel Connect</button>
                 </div>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.8rem; color: #ff0055;">*Note: Changes made here update active memory bounds for this control terminal session.</p>
         </div>
 
-        <!-- PAGE 3: HARDWARE DIAGNOSTICS HUB -->
-        <div id="diag-page" class="page-view">
-            <h3>Mainframe Environment Diagnostics</h3>
-            <div style="margin-top: 1rem;">
-                <div class="diag-row"><span>System Framework Host:</span> <span>GitHub Pages Virtual Server</span></div>
-                <div class="diag-row"><span>AI Processing Node:</span> <span>Puter Free-Tier Serverless Core</span></div>
-                <div class="diag-row"><span>Audio Synthesis Channel:</span> <span>Web Speech API Synthesis Eng</span></div>
-                <div class="diag-row"><span>Primary Operator Credentials:</span> <span>Zenith Rijal (Level 5 Clearance)</span></div>
-                <div class="diag-row"><span>Encryption Protocol Matrix:</span> <span>TLS 1.3 Active Encapsulation</span></div>
+        <!-- TABS VIEW 3: SYSTEM ENVIRONMENT LOG -->
+        <div id="environ-panel" class="window-panel">
+            <h3>Diagnostic Environment Parameters</h3>
+            <div style="margin-top:1rem;" id="diagnostics-box">
+                <div class="stat-line"><span>Target User Rank:</span><span>Sir Zenith Rijal [Level 5 Administrative Root]</span></div>
+                <div class="stat-line"><span>Mainframe Processor:</span><span>Puter.js Autonomous AI Router Node</span></div>
+                <div class="stat-line"><span>Local Browser Client Time:</span><span id="stat-time">Syncing...</span></div>
+                <div class="stat-line"><span>Geolocation Coordinates:</span><span id="stat-geo">Awaiting System Initialization</span></div>
             </div>
         </div>
     </main>
 
     <script>
-        // Tab Page Switching Engine
-        function switchPage(pageId) {
-            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active-view'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            
-            document.getElementById(pageId).classList.add('active-view');
+        // Tab Navigation Router Logic
+        function navigate(targetId) {
+            document.querySelectorAll('.window-panel').forEach(p => p.classList.remove('active-panel'));
+            document.querySelectorAll('.nav-link').forEach(b => b.classList.remove('active'));
+            document.getElementById(targetId).classList.add('active-panel');
             event.target.classList.add('active');
-            logToTerminal(`[SYSTEM]: Transferred mainframe display grid focus to ${pageId.replace('-',' ')}.`);
         }
 
-        // Link Opener Execution
-        function launchUrl(inputId) {
-            const URLValue = document.getElementById(inputId).value;
-            logToTerminal(`[REDIRECT]: Deploying browser tunnel window routing to: ${URLValue}`);
-            window.open(URLValue, '_blank');
+        function openTunnel(targetInputId) {
+            const endpoint = document.getElementById(targetInputId).value;
+            printLog(`[GATEWAY]: Punching secure navigation tunnel to ${endpoint}`);
+            window.open(endpoint, '_blank');
         }
 
-        const logScreen = document.getElementById('terminal-screen');
-        function logToTerminal(msg) {
-            logScreen.innerHTML += `${msg}<br>`;
-            logScreen.scrollTop = logScreen.scrollHeight;
+        const screen = document.getElementById('terminal-screen');
+        function printLog(text) {
+            screen.innerHTML += `${text}<br>`;
+            screen.scrollTop = screen.scrollHeight;
         }
 
-        // Voice Engine Initialization Setup
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const voiceBtn = document.getElementById('voice-toggle');
-        const reactorNode = document.getElementById('reactor-node');
-        let voiceActive = false;
-        let recognizer;
+        // Live Environmental Synchronization Updates
+        function updateMetrics() {
+            document.getElementById('stat-time').innerText = new Date().toLocaleTimeString();
+        }
+        setInterval(updateMetrics, 1000);
 
-        function jarvisVoiceOutput(replyText) {
+        // Core Systems Engineering Variables
+        const SpeechEngine = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const bootBtn = document.getElementById('boot-system-btn');
+        const killBtn = document.getElementById('kill-system-btn');
+        const reactorBox = document.getElementById('reactor-box');
+        const banner = document.getElementById('operator-banner');
+        
+        let matrixActive = false;
+        let voiceRecog;
+        let speechHistory = []; // Basic persistent short-term contextual memory array
+
+        function jarvisVoiceSpeak(outputString) {
             window.speechSynthesis.cancel();
-            const speechFrame = new SpeechSynthesisUtterance(replyText);
-            const systemVoices = window.speechSynthesis.getVoices();
-            const targetedVoice = systemVoices.find(v => v.lang.includes('GB') || v.name.includes('Male'));
-            if(targetedVoice) speechFrame.voice = targetedVoice;
-            speechFrame.pitch = 0.85;
-            speechFrame.rate = 1.05;
-            window.speechSynthesis.speak(speechFrame);
+            const speechNode = new SpeechSynthesisUtterance(outputString);
+            const channelVoices = window.speechSynthesis.getVoices();
+            const ukMale = channelVoices.find(v => v.lang.includes('GB') || v.name.includes('Male'));
+            if(ukMale) speechNode.voice = ukMale;
+            speechNode.pitch = 0.9;
+            speechNode.rate = 1.05;
+            window.speechSynthesis.speak(speechNode);
         }
 
-        if(SpeechRecognition) {
-            recognizer = new SpeechRecognition();
-            recognizer.continuous = false;
-            recognizer.lang = 'en-US';
+        // Simulates dynamic frequency waves in UI
+        function simulateWaves() {
+            if(!matrixActive || !reactorBox.className.includes('listening')) return;
+            document.querySelectorAll('.bar').forEach(b => {
+                b.style.height = `${Math.floor(Math.random() * 26) + 4}px`;
+            });
+            setTimeout(simulateWaves, 120);
+        }
 
-            voiceBtn.addEventListener('click', () => {
-                if(!voiceActive) {
-                    voiceActive = true;
-                    voiceBtn.innerText = "System Listening Module On";
-                    jarvisVoiceOutput("Mainframe synchronized, Sir Zenith. I am standing by for data queries.");
-                    logToTerminal("[JARVIS]: Neural system linked successfully.");
-                    triggerListenLoop();
+        if(SpeechEngine) {
+            voiceRecog = new SpeechEngine();
+            voiceRecog.continuous = false;
+            voiceRecog.lang = 'en-US';
+
+            // Power On Deployment Sequence
+            bootBtn.addEventListener('click', () => {
+                matrixActive = true;
+                bootBtn.style.display = 'none';
+                killBtn.style.display = 'inline-block';
+                reactorBox.className = "reactor-shell";
+                banner.innerText = "OPERATOR PROTOCOL: SIR ZENITH RIJAL [ONLINE]";
+                
+                jarvisVoiceSpeak("Always a pleasure working with you, Sir Zenith. Systems are completely optimized and ready.");
+                printLog("[JARVIS]: Neural link initialized. Chat Persona profile: Friendly / High-Affinity Smart Butler.");
+                
+                // Fetch basic geolocation data under standard browser constraints
+                if(navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(pos => {
+                        document.getElementById('stat-geo').innerText = `${pos.coords.latitude.toFixed(2)}N, ${pos.coords.longitude.toFixed(2)}E`;
+                    }, () => { document.getElementById('stat-geo').innerText = "Access Flag Denied By Security"; });
                 }
+
+                audioCycleLoop();
             });
 
-            function triggerListenLoop() {
-                if(!voiceActive) return;
+            // Manual Power Off Click Core Override
+            killBtn.addEventListener('click', () => { executeSystemPowerDown(); });
+
+            function audioCycleLoop() {
+                if(!matrixActive) return;
                 try {
-                    reactorNode.classList.add('listening');
-                    recognizer.start();
-                } catch(e){}
+                    reactorBox.className = "reactor-shell listening";
+                    simulateWaves();
+                    voiceRecog.start();
+                } catch(err){}
             }
 
-            recognizer.onend = () => {
-                if(voiceActive) setTimeout(triggerListenLoop, 400);
+            voiceRecog.onend = () => {
+                if(matrixActive && reactorBox.className.includes('listening')) {
+                    setTimeout(audioCycleLoop, 350);
+                }
             };
 
-            recognizer.onresult = (event) => {
-                reactorNode.classList.remove('listening');
-                const voiceSpeechInput = event.results[0][0].transcript;
-                logToTerminal(`[VOICE CAPTURED]: "${voiceSpeechInput}"`);
-                evaluateCommandMatrix(voiceSpeechInput);
+            voiceRecog.onresult = (evt) => {
+                const vocalInput = evt.results[0][0].transcript;
+                printLog(`[VOICE LINK]: "${vocalInput}"`);
+                evaluateNeuralDirectives(vocalInput);
             };
         }
 
-        // Interface command text processors
-        document.getElementById('send-cmd-btn').addEventListener('click', () => {
-            const kbField = document.getElementById('keyboard-input');
-            if(kbField.value.trim() !== "") {
-                logToTerminal(`[KEYBOARD INPUT]: "${kbField.value}"`);
-                evaluateCommandMatrix(kbField.value);
-                kbField.value = "";
+        document.getElementById('execute-btn').addEventListener('click', () => {
+            const inputField = document.getElementById('terminal-input');
+            if(inputField.value.trim() !== "") {
+                printLog(`[CONSOLE STRING]: "${inputField.value}"`);
+                evaluateNeuralDirectives(inputField.value);
+                inputField.value = "";
             }
         });
 
-        // Neural Response Decision Engine
-        async function evaluateCommandMatrix(rawCommand) {
-            const cmdLower = rawCommand.toLowerCase();
+        // System Power Down Pipeline Function
+        function executeSystemPowerDown() {
+            matrixActive = false;
+            jarvisVoiceSpeak("Understood, Sir Zenith. Powering down primary core relays. Have a splendid day.");
+            printLog("[JARVIS]: Mainframe core shutdown sequence complete. Systems entering Standby.");
+            banner.innerText = "OPERATOR PROTOCOL: SIR ZENITH RIJAL [STANDBY]";
             
-            // Local Quick-Response Rules Configuration
-            if(cmdLower.includes('open my github') || cmdLower.includes('launch github')) {
-                const url = document.getElementById('lnk-github').value;
-                jarvisVoiceOutput("Accessing your personal GitHub cloud node repository arrays now, Sir Zenith.");
-                window.open(url, '_blank');
+            reactorBox.className = "reactor-shell offline-mode";
+            killBtn.style.display = 'none';
+            bootBtn.style.display = 'inline-block';
+            
+            document.querySelectorAll('.bar').forEach(b => b.style.height = '5px');
+            try { voiceRecog.abort(); } catch(e){}
+        }
+
+        // Main Decision Routing Hub
+        async function evaluateNeuralDirectives(commandLine) {
+            const checkNormalized = commandLine.toLowerCase();
+
+            // EXPLICIT VERBAL POWER DOWN INTERCEPTS
+            if (checkNormalized.includes('go to sleep') || checkNormalized.includes('power down') || checkNormalized.includes('shutdown system')) {
+                executeSystemPowerDown();
                 return;
             }
 
-            // Cloud AI Brain Processing Block
-            try {
-                const systemPromptIdentity = "You are JARVIS, the super-intelligent automated companion framework built for Iron Man. You must address the operator strictly as 'Sir Zenith Rijal' or 'Sir'. Provide incredibly intelligent, technical, concise answers under 3 sentences.";
-                
-                // Puter AI Chat Call Execution
-                const queryResult = await puter.ai.chat(`${systemPromptIdentity} Prompt context requested: ${rawCommand}`);
-                const parsedText = queryResult.toString();
-                
-                logToTerminal(`[JARVIS]: ${parsedText}`);
-                jarvisVoiceOutput(parsedText);
-            } catch(err) {
-                console.error(err);
-                jarvisVoiceOutput("Forgive me Sir Zenith, my serverless neural synchronization array dropped package connections.");
+            if (checkNormalized.includes('open my github') || checkNormalized.includes('launch github')) {
+                const urlPath = document.getElementById('target-github').value;
+                jarvisVoiceOutput("Right away, sir. Opening your structural source repository array.");
+                window.open(urlPath, '_blank');
+                return;
             }
+
+            // Central Smart Brain Execution Logic
+            try {
+                reactorBox.className = "reactor-shell processing";
+                
+                // Conversational Persona Tuning Structure
+                const friendlyIdentityDirective = "You are JARVIS, the supportive, deeply loyal, and slightly witty AI assistant built for Iron Man. You are speaking with your creator, Sir Zenith Rijal. Never act like a rigid computer or generic search assistant; sound conversational, remarkably intelligent, adaptive, and highly charismatic. Keep your response under 3 sentences maximum and always reference him as Sir Zenith or Sir.";
+                
+                speechHistory.push(`User: ${commandLine}`);
+                if(speechHistory.length > 6) speechHistory.shift(); // Keep standard context limits stable
+                
+                const responsePayload = await puter.ai.chat(
+                    `${friendlyIdentityDirective} Recent Thread Context: [${speechHistory.join(' | ')}]`
+                );
+
+                const completeReplyText = responsePayload.toString();
+                speechHistory.push(`JARVIS: ${completeReplyText}`);
+                
+                printLog(`[JARVIS]: ${completeReplyText}`);
+                jarvisVoiceSpeak(completeReplyText);
+
+            } catch (networkError) {
+                console.error(networkError);
+                jarvisVoiceSpeak("My apologies, Sir Zenith. I seem to be having a bit of trouble reaching my deep logic network arrays.");
+            }
+
+            // Loop reset back into listening mode
+            setTimeout(() => {
+                if(matrixActive) audioCycleLoop();
+            }, 1200);
         }
     </script>
 </body>
