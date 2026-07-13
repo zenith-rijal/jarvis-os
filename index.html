@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>J.A.R.V.I.S. Mainframe v5.0 - Holographic CAD Engine</title>
-    <!-- Serverless Core & 3D Vector Math Libraries -->
+    <title>J.A.R.V.I.S. Mainframe v4.0 - Sir Zenith Rijal</title>
+    <!-- Serverless AI Routing Framework -->
     <script src="https://js.puter.com/v2/"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -20,6 +19,7 @@
             text-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
         }
         
+        /* Sci-Fi Tech Mesh Grid Layer */
         .hud-grid {
             position: fixed;
             width: 100vw;
@@ -41,6 +41,7 @@
             pointer-events: none;
         }
 
+        /* Complex Double-Border Header Header */
         header {
             z-index: 10;
             background: rgba(1, 8, 22, 0.95);
@@ -76,16 +77,18 @@
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
         }
 
+        /* Loaded Dashboard Matrix */
         .workspace-wrapper {
             position: relative;
             z-index: 5;
             display: grid;
-            grid-template-columns: 280px 1fr 320px;
+            grid-template-columns: 280px 1fr 280px;
             gap: 10px;
             padding: 10px;
             flex: 1;
         }
 
+        /* Side Telemetry Monitors */
         .sidebar-monitor {
             background: rgba(1, 8, 22, 0.85);
             border: 1px solid rgba(0, 240, 255, 0.3);
@@ -112,26 +115,7 @@
         }
         .view-frame.active-frame { display: block; }
 
-        /* Real-time Dynamic Hologram Canvas Wrapper */
-        .hologram-stage-container {
-            width: 100%;
-            height: 380px;
-            background: #00020a;
-            border: 1px solid rgba(0, 240, 255, 0.4);
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-        .stage-overlay-text {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 0.7rem;
-            color: rgba(0, 240, 255, 0.7);
-            pointer-events: none;
-            z-index: 4;
-        }
-
+        /* Multi-Ring Arc Reactor Core Elements */
         .reactor-assembly {
             display: flex;
             flex-direction: column;
@@ -141,8 +125,8 @@
         }
         .outer-ring {
             position: relative;
-            width: 120px;
-            height: 120px;
+            width: 170px;
+            height: 170px;
             border: 3px dashed #00f0ff;
             border-radius: 50%;
             animation: spinCW 25s linear infinite;
@@ -152,8 +136,8 @@
         }
         .mid-ring {
             position: absolute;
-            width: 90px;
-            height: 90px;
+            width: 130px;
+            height: 130px;
             border: 2px dotted rgba(0, 240, 255, 0.6);
             border-radius: 50%;
             animation: spinCCW 10s linear infinite;
@@ -162,23 +146,28 @@
             justify-content: center;
         }
         .inner-glow {
-            width: 45px;
-            height: 45px;
+            width: 65px;
+            height: 65px;
             border-radius: 50%;
             background: radial-gradient(circle, rgba(0,240,255,1) 0%, rgba(1,6,16,1) 80%);
-            box-shadow: 0 0 20px #00f0ff;
+            box-shadow: 0 0 30px #00f0ff;
+            transition: all 0.3s;
         }
 
-        .listening .inner-glow { background: radial-gradient(circle, #ff0055 0%, #010610 80%); box-shadow: 0 0 25px #ff0055; }
+        /* Functional States */
+        .listening .inner-glow { background: radial-gradient(circle, #ff0055 0%, #010610 80%); box-shadow: 0 0 35px #ff0055; }
         .listening .outer-ring { border-color: #ff0055; }
-        .processing .inner-glow { background: radial-gradient(circle, #ffaa00 0%, #010610 80%); box-shadow: 0 0 25px #ffaa00; }
+        .processing .inner-glow { background: radial-gradient(circle, #ffaa00 0%, #010610 80%); box-shadow: 0 0 35px #ffaa00; }
         .processing .outer-ring { border-color: #ffaa00; }
+        .sleeping .inner-glow { background: #1a2332; box-shadow: none; }
+        .sleeping .outer-ring { border-color: #224455; animation-play-state: paused; }
 
+        /* Loaded UI Lists & Terminal */
         .data-stream-box {
             background: #000;
             border: 1px solid rgba(0, 240, 255, 0.2);
             padding: 1rem;
-            height: 180px;
+            height: 250px;
             overflow-y: auto;
             font-size: 0.85rem;
             color: #8ae2ff;
@@ -195,28 +184,33 @@
             text-transform: uppercase; font-size: 0.8rem;
         }
         .action-button:hover { background: #00f0ff; color: #010610; box-shadow: 0 0 10px #00f0ff; }
+        .btn-abort { border-color: #ff0055; color: #ff0055; }
+        .btn-abort:hover { background: #ff0055; color: #fff; box-shadow: 0 0 12px #ff0055; }
 
-        .link-control-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+        /* Data Matrix Grids */
+        .link-control-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
         .link-node-card {
-            border: 1px solid rgba(0, 240, 255, 0.2); background: rgba(0,0,0,0.5); padding: 1rem;
+            border: 1px solid rgba(0, 240, 255, 0.2); background: rgba(0,0,0,0.5);
+            padding: 1rem; border-radius: 2px; position: relative;
         }
+        .link-node-card::before {
+            content: 'LINK_NODE'; position: absolute; right: 5px; top: 2px;
+            font-size: 0.55rem; color: rgba(0, 240, 255, 0.4);
+        }
+        .link-node-card h4 { font-size: 0.85rem; color: #fff; margin-bottom: 0.5rem; letter-spacing: 1px; }
         .link-node-card input {
             width: 100%; background: #000; border: 1px solid rgba(0, 240, 255, 0.3);
             color: #00f0ff; padding: 0.4rem; font-size: 0.8rem; font-family: inherit; margin-bottom: 0.5rem;
         }
 
-        .telemetry-row { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 4px 0; border-bottom: 1px dashed rgba(0,240,255,0.1); }
+        .telemetry-row { display: flex; justify-content: space-between; font-size: 0.75rem; padding: 3px 0; border-bottom: 1px dashed rgba(0,240,255,0.1); }
         .telemetry-val { color: #fff; font-weight: bold; }
-        .suggestion-chip {
-            background: rgba(0, 240, 255, 0.05); border: 1px dashed rgba(0,240,255,0.4);
-            padding: 6px; font-size: 0.75rem; cursor: pointer; margin-bottom: 5px; display: block;
-        }
-        .suggestion-chip:hover { background: rgba(0, 240, 255, 0.2); color: #fff; }
 
         @keyframes sweep { 0% { top: 0%; } 50% { top: 100%; } 100% { top: 0%; } }
         @keyframes spinCW { 100% { transform: rotate(360deg); } }
         @keyframes spinCCW { 100% { transform: rotate(-360deg); } }
 
+        /* Responsive Breakdowns */
         @media(max-width: 950px) {
             .workspace-wrapper { grid-template-columns: 1fr; }
             .sidebar-monitor { display: none; }
@@ -229,78 +223,94 @@
 
     <header>
         <div class="title-group">
-            <h1>J.A.R.V.I.S. CAD-MAX V5</h1>
-            <p id="clearance-banner">HOLOGRAPHIC BLUEPRINT SCHEMATIC ENGINE // OPERATOR: SIR ZENITH RIJAL</p>
+            <h1>J.A.R.V.I.S. MATRIX V4</h1>
+            <p id="clearance-banner">SECURE SYSTEM ACCESS: SIR ZENITH RIJAL [LEVEL 5 CLEARANCE]</p>
         </div>
         <nav>
-            <button class="nav-tab active" onclick="switchTab('core-frame')">Holo-Deck</button>
+            <button class="nav-tab active" onclick="switchTab('core-frame')">Cores</button>
             <button class="nav-tab" onclick="switchTab('routing-frame')">Network</button>
+            <button class="nav-tab" onclick="switchTab('telemetry-frame')">Specs</button>
         </nav>
     </header>
 
     <div class="workspace-wrapper">
-        <!-- LEFT CONTROL STRIP: SYSTEM COMMAND ARCHIVE -->
+        <!-- LEFT SIDEBAR LOG READOUT PANEL -->
         <div class="sidebar-monitor">
-            <div class="monitor-heading">ENGINE STRUCTURE DIAGNOSTICS</div>
-            <div id="left-telemetry"></div>
-            <div class="reactor-assembly">
-                <div class="outer-ring" id="reactor-node">
-                    <div class="mid-ring"><div class="inner-glow"></div></div>
-                </div>
-                <button class="action-button" id="initialize-matrix-btn" style="font-size:0.7rem; padding:4px 8px;">Boot Audio Link</button>
+            <div class="monitor-heading">SATELLITE MATRIX</div>
+            <div id="left-telemetry">
+                <!-- Javascript will pop dynamic data streams here -->
             </div>
         </div>
 
-        <!-- CENTER STAGE: HOLOGRAM VIEWPORTS AND DATA STRINGS -->
+        <!-- CENTER COMPONENT DISPLAY PANEL -->
         <div class="center-stage">
+            <!-- FRAME 1: MAIN ARC CORE INTERFACE -->
             <div id="core-frame" class="view-frame active-frame">
-                <!-- Three.js Interactive Output Container -->
-                <div class="hologram-stage-container" id="canvas-viewport">
-                    <div class="stage-overlay-text" id="viewport-telemetry">VIEWPORT: 3D HOLOGRAPHIC MATRIX // ACTIVE MESHES: 0</div>
+                <div class="reactor-assembly">
+                    <div class="outer-ring" id="reactor-node">
+                        <div class="mid-ring"><div class="inner-glow"></div></div>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="action-button" id="initialize-matrix-btn">Boot Up Systems</button>
+                        <button class="action-button btn-abort" id="kill-matrix-btn" style="display:none;">Standby Mode</button>
+                    </div>
                 </div>
-
                 <div class="data-stream-box" id="terminal-screen">
-                    [INITIALIZATION]: Holographic geometric core engines online. Try saying: "make a box", "render a sphere", "change color to red", or "add scale factor 3".<br>
+                    [INITIALIZATION]: Awaiting master encryption key string verification from Sir Zenith Rijal...<br>
                 </div>
                 <div class="control-row">
-                    <input type="text" id="terminal-input" class="terminal-input-node" placeholder="Describe layout configurations (e.g., 'render a giant wireframe cylinder updates')...">
+                    <input type="text" id="terminal-input" placeholder="Transmit raw encrypted system code strings...">
                     <button class="action-button" id="send-cmd-btn">Execute</button>
                 </div>
             </div>
 
-            <!-- FRAME 2: ROUTING -->
+            <!-- FRAME 2: LOADED SOCIAL LINK ENGINE -->
             <div id="routing-frame" class="view-frame">
                 <h3 style="font-size:1.1rem; margin-bottom:1rem; border-bottom:1px solid #00f0ff;">Central Communications Router</h3>
                 <div class="link-control-grid">
                     <div class="link-node-card">
                         <h4>Personal Workspace Portfolio</h4>
                         <input type="text" id="link-portfolio" value="https://zenithrijal.com.np">
-                        <button class="action-button" style="padding:0.3rem; font-size:0.7rem;" onclick="window.open(document.getElementById('link-portfolio').value, '_blank')">Launch Portal</button>
+                        <button class="action-button" style="padding:0.3rem; font-size:0.7rem;" onclick="punchTunnel('link-portfolio')">Launch Portal</button>
                     </div>
                     <div class="link-node-card">
-                        <h4>Facebook Profile Portal</h4>
+                        <h4>Facebook Social Identity</h4>
                         <input type="text" id="link-facebook" value="https://facebook.com">
-                        <button class="action-button" style="padding:0.3rem; font-size:0.7rem;" onclick="window.open(document.getElementById('link-facebook').value, '_blank')">Launch Portal</button>
+                        <button class="action-button" style="padding:0.3rem; font-size:0.7rem;" onclick="punchTunnel('link-facebook')">Launch Portal</button>
                     </div>
+                    <div class="link-node-card">
+                        <h4>Instagram Feed Stream</h4>
+                        <input type="text" id="link-instagram" value="https://instagram.com">
+                        <button class="action-button" style="padding:0.3rem; font-size:0.7rem;" onclick="punchTunnel('link-instagram')">Launch Portal</button>
+                    </div>
+                    <div class="link-node-card">
+                        <h4>GitHub Systems Node</h4>
+                        <input type="text" id="link-github" value="https://github.com">
+                        <button class="action-button" style="padding:0.3rem; font-size:0.7rem;" onclick="punchTunnel('link-github')">Launch Portal</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FRAME 3: DETAILED STATIC DIAGNOSTICS VIEW -->
+            <div id="telemetry-frame" class="view-frame">
+                <h3 style="font-size:1.1rem; margin-bottom:1rem; border-bottom:1px solid #00f0ff;">Structural Base Hardware Metrics</h3>
+                <div id="static-specs-box">
+                    <!-- Configured via state arrays -->
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT SIDEBAR: INTELLIGENT AI STRUCTURAL SUGGESTIONS -->
+        <!-- RIGHT SIDEBAR READOUT PANEL -->
         <div class="sidebar-monitor">
-            <div class="monitor-heading">AI COGNITIVE SUGGESTIONS</div>
-            <div id="suggestions-container" style="margin-top:0.5rem;">
-                <div class="suggestion-chip" onclick="injectPrompt('Add wireframe grid infrastructure armor')">⚡ Suggestion: Apply structural wireframe grids</div>
-                <div class="suggestion-chip" onclick="injectPrompt('Generate an orbital ring complex around the model')">⚡ Suggestion: Construct defensive orbital rings</div>
-                <div class="suggestion-chip" onclick="injectPrompt('Scale mesh along Y axis to design a tower tower')">⚡ Suggestion: Scale geometry to tower structural ratios</div>
+            <div class="monitor-heading">ENVIRONMENT CORE</div>
+            <div id="right-telemetry">
+                <!-- Javascript will pop dynamic data streams here -->
             </div>
-            <div class="monitor-heading" style="margin-top:1rem;">REAL-TIME BOUNDS</div>
-            <div id="right-telemetry"></div>
         </div>
     </div>
 
     <script>
-        // Multi-Tab Swapping Engine
+        // Multi-Tab Interface Swapping
         function switchTab(frameId) {
             document.querySelectorAll('.view-frame').forEach(f => f.classList.remove('active-frame'));
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -308,9 +318,10 @@
             event.target.classList.add('active');
         }
 
-        function injectPrompt(text) {
-            document.getElementById('terminal-input').value = text;
-            document.getElementById('send-cmd-btn').click();
+        function punchTunnel(inputId) {
+            const urlDestination = document.getElementById(inputId).value;
+            printConsole(`[NETWORK]: Routing gateway package tunneling outward to: ${urlDestination}`);
+            window.open(urlDestination, '_blank');
         }
 
         const terminalScreen = document.getElementById('terminal-screen');
@@ -319,57 +330,52 @@
             terminalScreen.scrollTop = terminalScreen.scrollHeight;
         }
 
-        // Initialize 3D Vector Space
-        const viewport = document.getElementById('canvas-viewport');
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x010610, 0.015);
+        // Generate Loaded Data Stream on Sidebar Panels
+        function runTelemetryGenerators() {
+            const leftBox = document.getElementById('left-telemetry');
+            const rightBox = document.getElementById('right-telemetry');
+            
+            const leftMetrics = [
+                { name: 'CORE_TEMP', val: () => (Math.random() * 15 + 32).toFixed(1) + ' °C' },
+                { name: 'BANDWIDTH_FLOW', val: () => (Math.random() * 100 + 400).toFixed(0) + ' Kbps' },
+                { name: 'QUANTUM_SYNC', val: () => (Math.random() * 5 + 94).toFixed(2) + ' %' },
+                { name: 'BUFFER_LOAD', val: () => (Math.random() * 12 + 2).toFixed(0) + ' MB' }
+            ];
 
-        const camera = new THREE.PerspectiveCamera(60, viewport.clientWidth / viewport.clientHeight, 0.1, 1000);
-        camera.position.set(0, 5, 8);
-        camera.lookAt(0, 0, 0);
+            const rightMetrics = [
+                { name: 'OPERATOR_SYNC', val: () => 'Sir Zenith Rijal' },
+                { name: 'LOC_TUNNEL', val: () => 'Mainframe Cloud Node' },
+                { name: 'PUTER_ROUTER', val: () => 'API ACTIVE [GREEN]' },
+                { name: 'TIME_MATRIX', val: () => new Date().toLocaleTimeString() }
+            ];
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(viewport.clientWidth, viewport.clientHeight);
-        viewport.appendChild(renderer.domElement);
-
-        // Holographic Vector Lighting Config
-        const ambientLight = new THREE.AmbientLight(0x002244);
-        scene.add(ambientLight);
-        const pointLight = new THREE.PointLight(0x00f0ff, 2, 50);
-        pointLight.position.set(5, 10, 5);
-        scene.add(pointLight);
-
-        // Tech Infrastructure Floor Blueprint Grid Base
-        const gridHelper = new THREE.GridHelper(20, 20, 0x00f0ff, 0x002244);
-        gridHelper.position.y = -2;
-        scene.add(gridHelper);
-
-        let targetedMesh = null;
-
-        // 3D Engine Core Animation Loop
-        function animateEngine() {
-            requestAnimationFrame(animateEngine);
-            if (targetedMesh) {
-                targetedMesh.rotation.x += 0.005;
-                targetedMesh.rotation.y += 0.01;
-            }
-            renderer.render(scene, camera);
+            setInterval(() => {
+                leftBox.innerHTML = leftMetrics.map(m => `<div class="telemetry-row"><span>${m.name}:</span><span class="telemetry-val">${m.val()}</span></div>`).join('');
+                rightBox.innerHTML = rightMetrics.map(m => `<div class="telemetry-row"><span>${m.name}:</span><span class="telemetry-val">${m.val()}</span></div>`).join('');
+            }, 1000);
         }
-        animateEngine();
 
-        // Responsive Resizing Listeners
-        window.addEventListener('resize', () => {
-            camera.aspect = viewport.clientWidth / viewport.clientHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(viewport.clientWidth, viewport.clientHeight);
-        });
+        // Deploy static specs array layout
+        const specs = [
+            { label: 'Host Core Base', val: 'GitHub Pages Cloud Grid' },
+            { label: 'Neural Intelligence', val: 'Puter Autonomous LLM Framework' },
+            { label: 'Primary Owner Authority', val: 'Sir Zenith Rijal' },
+            { label: 'Audio Intercept Channel', val: 'Native Webkit API Engine' }
+        ];
+        document.getElementById('static-specs-box').innerHTML = specs.map(s => `<div class="telemetry-row" style="font-size:0.9rem; padding:8px 0;"><span>${s.label}:</span><span class="telemetry-val">${s.val}</span></div>`).join('');
 
-        // Speech Engine Integration Framework
+        runTelemetryGenerators();
+
+        // Speech Engine Operations Configuration
         const SpeechMatrix = window.SpeechRecognition || window.webkitSpeechRecognition;
         const bootBtn = document.getElementById('initialize-matrix-btn');
+        const killBtn = document.getElementById('kill-matrix-btn');
         const reactorNode = document.getElementById('reactor-node');
+        const banner = document.getElementById('clearance-banner');
+        
         let systemRunning = false;
         let vocalEngine;
+        let dialogueMemoryStack = [];
 
         function jarvisVocalize(textResponse) {
             window.speechSynthesis.cancel();
@@ -377,7 +383,7 @@
             const userVoices = window.speechSynthesis.getVoices();
             const britishMaleProfile = userVoices.find(v => v.lang.includes('GB') || v.name.includes('Male'));
             if(britishMaleProfile) utteranceNode.voice = britishMaleProfile;
-            utteranceNode.pitch = 0.9;
+            utteranceNode.pitch = 0.88;
             utteranceNode.rate = 1.05;
             window.speechSynthesis.speak(utteranceNode);
         }
@@ -388,134 +394,116 @@
             vocalEngine.lang = 'en-US';
 
             bootBtn.addEventListener('click', () => {
-                systemRunning = !systemRunning;
-                if(systemRunning) {
-                    bootBtn.innerText = "Mute Link";
-                    reactorNode.className = "outer-ring listening";
-                    jarvisVocalize("Holographic rendering interface initialization complete. Direct me on structural modifications, Sir Zenith.");
-                    voiceCycleTrigger();
-                } else {
-                    bootBtn.innerText = "Boot Audio Link";
-                    reactorNode.className = "outer-ring";
-                    try { vocalEngine.abort(); } catch(e){}
-                }
+                systemRunning = true;
+                bootBtn.style.display = 'none';
+                killBtn.style.display = 'inline-block';
+                reactorNode.className = "outer-ring";
+                banner.innerText = "SECURE SYSTEM ACCESS: SIR ZENITH RIJAL [LEVEL 5 CLEARANCE]";
+                
+                jarvisVocalize("Mainframe fully functional, Sir Zenith. Visual parameters loaded and telemetry clusters are completely online.");
+                printConsole("[JARVIS]: Core matrices activated. Behavior profile loaded: Intelligent, witty, charismatic companion.");
+                
+                voiceCycleTrigger();
             });
+
+            killBtn.addEventListener('click', () => { powerOffMainframe(); });
 
             function voiceCycleTrigger() {
                 if(!systemRunning) return;
-                try { vocalEngine.start(); } catch(e){}
+                try {
+                    reactorNode.className = "outer-ring listening";
+                    vocalEngine.start();
+                } catch(e){}
             }
-            vocalEngine.onend = () => { if(systemRunning) setTimeout(voiceCycleTrigger, 400); };
+
+            vocalEngine.onend = () => {
+                if(systemRunning && reactorNode.className.includes('listening')) {
+                    setTimeout(voiceCycleTrigger, 350);
+                }
+            };
+
             vocalEngine.onresult = (event) => {
                 const resultsString = event.results[0][0].transcript;
-                printConsole(`[VOCAL COMMAND]: "${resultsString}"`);
-                parseCADDirectives(resultsString);
+                printConsole(`[VOCAL DATA]: "${resultsString}"`);
+                computeDirectives(resultsString);
             };
         }
 
         document.getElementById('send-cmd-btn').addEventListener('click', () => {
             const inputElement = document.getElementById('terminal-input');
             if(inputElement.value.trim() !== "") {
-                printConsole(`[TEXT COMMAND]: "${inputElement.value}"`);
-                parseCADDirectives(inputElement.value);
+                printConsole(`[MANUAL COMMAND]: "${inputElement.value}"`);
+                computeDirectives(inputElement.value);
                 inputElement.value = "";
             }
         });
 
-        // Real-Time Vector Synthesis Engine (Interpreting User Intent into actual 3D objects)
-        async function parseCADDirectives(commandText) {
-            const lowerCmd = commandText.toLowerCase();
-            reactorNode.className = "outer-ring processing";
+        function powerOffMainframe() {
+            systemRunning = false;
+            jarvisVocalize("Understood, Sir Zenith. Standing down mainframe operations. Cores entering power saving cycle.");
+            printConsole("[JARVIS]: Core shut down command triggered. Systems entering sleep state.");
+            banner.innerText = "SECURE SYSTEM ACCESS: SIR ZENITH RIJAL [STANDBY]";
+            
+            reactorNode.className = "outer-ring sleeping";
+            killBtn.style.display = 'none';
+            bootBtn.style.display = 'inline-block';
+            try { vocalEngine.abort(); } catch(e){}
+        }
 
-            if (targetedMesh) {
-                // Modify existing structural configuration
-                if (lowerCmd.includes('red') || lowerCmd.includes('crimson')) {
-                    targetedMesh.material.color.setHex(0xff0044);
-                    printConsole("[ENGINE]: Adjusted emissive laser colors to Red Matrix Spectrum.");
-                    jarvisVocalize("Modifying laser profile color parameters to absolute red spectrum, Sir Zenith.");
-                    resetState(); return;
-                }
-                if (lowerCmd.includes('green') || lowerCmd.includes('emerald')) {
-                    targetedMesh.material.color.setHex(0x00ff88);
-                    printConsole("[ENGINE]: Adjusted emissive laser colors to Emerald Spectrum.");
-                    jarvisVocalize("Applying emerald wavelength adjustments directly to the model, Sir.");
-                    resetState(); return;
-                }
-                if (lowerCmd.includes('scale') || lowerCmd.includes('bigger') || lowerCmd.includes('giant')) {
-                    targetedMesh.scale.set(2.5, 2.5, 2.5);
-                    printConsole("[ENGINE]: Matrix boundaries recalculated. Scaled element up by x2.5");
-                    jarvisVocalize("Vector array upscaled successfully, Sir Zenith.");
-                    resetState(); return;
-                }
-            }
+        async function computeDirectives(rawTextString) {
+            const lowerString = rawTextString.toLowerCase();
 
-            // Generate brand new assets based on prompt architecture
-            let geometry;
-            let shapeName = "Custom Spatial Vector Mesh";
-
-            if (lowerCmd.includes('box') || lowerCmd.includes('cube') || lowerCmd.includes('structure')) {
-                geometry = new THREE.BoxGeometry(2, 2, 2);
-                shapeName = "Structural Cuboid Node";
-            } else if (lowerCmd.includes('sphere') || lowerCmd.includes('globe') || lowerCmd.includes('orb')) {
-                geometry = new THREE.SphereGeometry(1.5, 16, 16);
-                shapeName = "Spherical Core Assembly";
-            } else if (lowerCmd.includes('cylinder') || lowerCmd.includes('tower') || lowerCmd.includes('pipe')) {
-                geometry = new THREE.CylinderGeometry(1, 1, 3, 16);
-                shapeName = "Cylindrical Transmission Column";
-            } else {
-                // Forward complex structural ideas directly to Puter AI for live design iterations and verbal breakdown
-                try {
-                    const aiPayload = await puter.ai.chat(
-                        `You are JARVIS assisting Sir Zenith Rijal. He has an idea described as: "${commandText}". Give a rapid 2-sentence design assessment or mechanical suggestion regarding how to architect this structural blueprint.`
-                    );
-                    printConsole(`[JARVIS ANALYTICS]: ${aiPayload}`);
-                    jarvisVocalize(aiPayload.toString());
-                } catch(e) {
-                    printConsole("[ERROR]: Cloud processing timeout.");
-                }
-                resetState();
+            // Intercept Power Out Options
+            if (lowerString.includes('go to sleep') || lowerString.includes('power down') || lowerString.includes('shutdown system') || lowerString.includes('turn off')) {
+                powerOffMainframe();
                 return;
             }
 
-            // Remove existing item to build clean layout iterations
-            if (targetedMesh) scene.remove(targetedMesh);
+            // Quick Social Shortcuts Intercept
+            if(lowerString.includes('open facebook')) {
+                jarvisVocalize("Opening your social identity node, sir.");
+                punchTunnel('link-facebook');
+                return;
+            }
+            if(lowerString.includes('open instagram')) {
+                jarvisVocalize("Opening your media stream link right away, sir.");
+                punchTunnel('link-instagram');
+                return;
+            }
+            if(lowerString.includes('open portfolio') || lowerString.includes('open website')) {
+                jarvisVocalize("Accessing your personal digital portfolio platform, sir.");
+                punchTunnel('link-portfolio');
+                return;
+            }
 
-            // Create high-tech blueprint style glowing wireframe materials
-            const material = new THREE.MeshBasicMaterial({
-                color: 0x00f0ff,
-                wireframe: true,
-                transparent: true,
-                opacity: 0.85
-            });
+            // High Intelligence Personality Brain Generation
+            try {
+                reactorNode.className = "outer-ring processing";
+                
+                const customPersonaPrompt = "You are JARVIS, Tony Stark's brilliantly sophisticated, witty, and deeply loyal AI framework. You are currently speaking with your master creator, Sir Zenith Rijal. Keep responses charming, supportive, highly conversational, and never exceed 3 short sentences. Always address him as Sir Zenith or Sir.";
+                
+                dialogueMemoryStack.push(`User: ${rawTextString}`);
+                if(dialogueMemoryStack.length > 6) dialogueMemoryStack.shift();
 
-            targetedMesh = new THREE.Mesh(geometry, material);
-            scene.add(targetedMesh);
+                const aiResponseObject = await puter.ai.chat(
+                    `${customPersonaPrompt} Conversation Thread Context: [${dialogueMemoryStack.join(' | ')}]`
+                );
 
-            document.getElementById('viewport-telemetry').innerText = `VIEWPORT: 3D HOLOGRAPHIC MATRIX // ACTIVE MESHES: 1 (${shapeName.toUpperCase()})`;
-            printConsole(`[COMPUTED CAD]: Vector compilation successful. Initialized structural blueprint node: ${shapeName}`);
-            jarvisVocalize(`Projecting interactive 3D model blueprint for the ${shapeName} now, Sir Zenith.`);
+                const finalCleanReply = aiResponseObject.toString();
+                dialogueMemoryStack.push(`JARVIS: ${finalCleanReply}`);
+                
+                printConsole(`[JARVIS]: ${finalCleanReply}`);
+                jarvisVocalize(finalCleanReply);
 
-            resetState();
+            } catch (err) {
+                console.error(err);
+                jarvisVocalize("Apologies, Sir Zenith. My serverless cloud matrix is running into momentary communication errors.");
+            }
+
+            setTimeout(() => {
+                if(systemRunning) voiceCycleTrigger();
+            }, 1200);
         }
-
-        function resetState() {
-            if(systemRunning) reactorNode.className = "outer-ring listening";
-            else reactorNode.className = "outer-ring";
-        }
-
-        // Constant Ambient Telemetry Updates Loops
-        setInterval(() => {
-            document.getElementById('left-telemetry').innerHTML = `
-                <div class="telemetry-row"><span>CAD_ENGINE_FPS:</span><span class="telemetry-val">60.00</span></div>
-                <div class="telemetry-row"><span>GPU_MATRIX_LOAD:</span><span class="telemetry-val">${(Math.random()*8 + 12).toFixed(2)}%</span></div>
-                <div class="telemetry-row"><span>VECTOR_CACHE:</span><span class="telemetry-val">STABLE</span></div>
-            `;
-            document.getElementById('right-telemetry').innerHTML = `
-                <div class="telemetry-row"><span>MESH_X_ROT:</span><span class="telemetry-val">${targetedMesh ? targetedMesh.rotation.x.toFixed(3) : '0.000'}</span></div>
-                <div class="telemetry-row"><span>MESH_Y_ROT:</span><span class="telemetry-val">${targetedMesh ? targetedMesh.rotation.y.toFixed(3) : '0.000'}</span></div>
-                <div class="telemetry-row"><span>HOLO_GRID:</span><span class="telemetry-val">20x20 METERS</span></div>
-            `;
-        }, 300);
     </script>
 </body>
 </html>
